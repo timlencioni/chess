@@ -40,10 +40,10 @@ public class MovePieces {
     public static class RookMovement implements ChessPieceMovement {
         @Override
         public Collection<ChessMove> getPossibleMoves(ChessBoard board, ChessPosition myPosition) {
-            
+
             // Return a collection of possible moves
         }
     }
 
-    // Implement similar classes for Knight, Bishop, Queen, and King
+    // TODO:: Implement similar classes for Knight, Bishop, Queen, and King
 }
