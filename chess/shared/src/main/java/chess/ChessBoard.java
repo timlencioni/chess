@@ -44,4 +44,12 @@ public class ChessBoard {
     public void resetBoard() {
         throw new RuntimeException("Not implemented");
     }
+
+    /*
+    @Override
+    public boolean equals(Object o) {
+        //TODO: Override the function
+    }
+    */
+
 }
