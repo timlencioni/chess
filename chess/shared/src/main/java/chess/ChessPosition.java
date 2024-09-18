@@ -51,6 +51,6 @@ public class ChessPosition {
 
     @Override
     public String toString(){
-        return Integer.toString(row) + "," + Integer.toString(col);
+        return "(" + Integer.toString(row) + "," + Integer.toString(col) + ")";
     }
 }

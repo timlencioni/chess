@@ -64,7 +64,7 @@ public class ChessMove {
     @Override
     public String toString() {
         var p = (promotionPiece == null ? "" : ":" + promotionPiece);
-        return String.format("%s:%s%s", start.toString(), end.toString(), p);
+        return String.format("%s->%s%s", start.toString(), end.toString(), p);
     }
 
 }
