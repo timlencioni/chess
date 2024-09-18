@@ -2,7 +2,7 @@ package chess;
 
 import java.util.Collection;
 
-public interface MovementRule {
+public interface MovementCalculator {
     public Collection<ChessMove> moves(ChessBoard board, ChessPosition myPosition);
 }
 
