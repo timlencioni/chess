@@ -1,6 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -68,27 +67,22 @@ public class ChessPiece {
                 MovementCalculator queenMoves = new QueenMoveCalculator();
                 return queenMoves.moves(board, myPosition);
             case PAWN:
-                MovementCalculator pawnMoves = new PawnMoveCalculator();
-                return pawnMoves.moves(board, myPosition);
+                if (pieceColor == ChessGame.TeamColor.WHITE) {
+                    MovementCalculator pawnMoves = new WhitePawnMoveCalculator();
+                    return pawnMoves.moves(board, myPosition);
+                }
+                else {
+                    MovementCalculator pawnMoves = new BlackPawnMoveCalculator();
+                    return pawnMoves.moves(board, myPosition);
+                }
             case KNIGHT:
                 MovementCalculator knightMoves = new KnightMoveCalculator();
                 return knightMoves.moves(board, myPosition);
             default:
                 System.out.println("Invalid Piece Type");
+                return null;
         }
 
-
-        if(this.type == PieceType.KING) {
-            MovementCalculator kingMoves = new KingMoveCalculator();
-            kingMoves.moves(board, myPosition);
-        }
-
-        if(this.type == PieceType.KING) {
-            MovementCalculator kingMoves = new KingMoveCalculator();
-            kingMoves.moves(board, myPosition);
-        }
-
-        return new ArrayList<>(); //return the datastructure received from the calculator
     }
 
     @Override

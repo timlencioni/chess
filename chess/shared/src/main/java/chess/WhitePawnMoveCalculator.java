@@ -2,15 +2,15 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
-
-public class PawnMoveCalculator implements MovementCalculator {
+// FIXME:: update the direction the pawn is going apparently.
+public class WhitePawnMoveCalculator implements MovementCalculator {
 
     public ChessPiece.PieceType promo = null;
 
     @Override
     public Collection<ChessMove> moves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new HashSet<>();
-        //FIXME: What to do for promotion piece?
+
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int rowToAdd = row + 1; // Can only go forward one row
@@ -20,13 +20,16 @@ public class PawnMoveCalculator implements MovementCalculator {
                 int colToAdd = col + i; //Change column to go forward left, straight, and right.
                 ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
                 if (col != colToAdd) {
-                    if (board.getPiece(newPos).getTeamColor() != null
-                            && board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor()
-                            && 0 < colToAdd && colToAdd < 9) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos, promo));
+                    if (0 < colToAdd && colToAdd < 8) {
+                        if (board.getPiece(newPos) != null) {
+                            if (board.getPiece(newPos).getTeamColor() != null
+                                    && board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                                possibleMoves.add(new ChessMove(myPosition, newPos, promo));
+                            }
+                        }
                     }
                 } else {
-                    if (board.getPiece(newPos).getTeamColor() == null) {
+                    if (board.getPiece(newPos) == null) {
                         possibleMoves.add(new ChessMove(myPosition, newPos, promo));
                     }
                 }
@@ -36,7 +39,7 @@ public class PawnMoveCalculator implements MovementCalculator {
         if (row == 2) {
             ChessPosition newPos1 = new ChessPosition(row + 1, col);
             ChessPosition newPos2 = new ChessPosition(row + 2, col);
-            if (board.getPiece(newPos1).getTeamColor() == null && board.getPiece(newPos2).getTeamColor() == null) {
+            if (board.getPiece(newPos1) == null && board.getPiece(newPos2) == null) {
                 possibleMoves.add(new ChessMove(myPosition, newPos2, promo));
             }
         }
