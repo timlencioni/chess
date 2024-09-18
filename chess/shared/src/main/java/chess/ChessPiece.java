@@ -56,23 +56,23 @@ public class ChessPiece {
         switch (this.type){
             case KING :
                 MovementCalculator kingMoves = new KingMoveCalculator();
-                kingMoves.moves(board, myPosition);
-                break;
+                return kingMoves.moves(board, myPosition);
+                // break;
             case BISHOP:
                 MovementCalculator bishopMoves = new BishopMoveCalculator();
-                bishopMoves.moves(board, myPosition);
+                return bishopMoves.moves(board, myPosition);
             case ROOK:
                 MovementCalculator rookMoves = new RookMoveCalculator();
-                rookMoves.moves(board, myPosition);
+                return rookMoves.moves(board, myPosition);
             case QUEEN:
                 MovementCalculator queenMoves = new QueenMoveCalculator();
-                queenMoves.moves(board, myPosition);
+                return queenMoves.moves(board, myPosition);
             case PAWN:
                 MovementCalculator pawnMoves = new PawnMoveCalculator();
-                pawnMoves.moves(board, myPosition);
+                return pawnMoves.moves(board, myPosition);
             case KNIGHT:
                 MovementCalculator knightMoves = new KnightMoveCalculator();
-                knightMoves.moves(board, myPosition);
+                return knightMoves.moves(board, myPosition);
             default:
                 System.out.println("Invalid Piece Type");
         }

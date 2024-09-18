@@ -48,4 +48,9 @@ public class ChessPosition {
         result = 71 * result + (7 * col);
         return result;
     }
+
+    @Override
+    public String toString(){
+        return Integer.toString(row) + "," + Integer.toString(col);
+    }
 }
