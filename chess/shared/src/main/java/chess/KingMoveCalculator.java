@@ -22,9 +22,6 @@ public class KingMoveCalculator implements MovementCalculator {
         addMove(possibleMoves, myPosition, row, col + 1, board);
         addMove(possibleMoves, myPosition, row, col - 1, board);
 
-        //FIXME:: Add verification of moving into check situation
-
-
         return possibleMoves; //Return the datastructure with the king moves.
     }
 
@@ -34,9 +31,12 @@ public class KingMoveCalculator implements MovementCalculator {
         // Check that we stay on the board
         if (rowToAdd > 0 && colToAdd > 0 && rowToAdd < 9 && colToAdd < 9) {
             //Check that desired position is occupied by someone on the other team
-            if (board.getPiece(newPos).getTeamColor() != board.getPiece(currPos).getTeamColor()) {
-                set.add(new ChessMove(currPos, new ChessPosition(rowToAdd, colToAdd), null));
+            if (board.getPiece(newPos) != null) {
+                if (board.getPiece(newPos).getTeamColor() != board.getPiece(currPos).getTeamColor()) {
+                    set.add(new ChessMove(currPos, new ChessPosition(rowToAdd, colToAdd), null));
+                }
             }
+            else set.add(new ChessMove(currPos, new ChessPosition(rowToAdd, colToAdd), null));
         }
     }
 }
