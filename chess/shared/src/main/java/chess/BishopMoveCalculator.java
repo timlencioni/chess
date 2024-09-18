@@ -17,9 +17,15 @@ public class BishopMoveCalculator implements MovementCalculator {
         for (int i = 1; i < 8; i++) { // Up to the right
             int rowToAdd = row + i;
             int colToAdd = col + i;
-            if (board.getPiece(myPosition) != null && rowToAdd > 0 && colToAdd > 0
-                    && rowToAdd < 9 && colToAdd < 9) {
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(rowToAdd, colToAdd), null));
+            ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
+            if (rowToAdd <= 0 || colToAdd <= 0 || rowToAdd >= 9 || colToAdd >= 9) break;
+            if (board.getPiece(newPos) == null) {
+                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+            }
+            else if (board.getPiece(newPos) != null
+                    && board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                break;
             }
             else break;
         }
@@ -27,19 +33,32 @@ public class BishopMoveCalculator implements MovementCalculator {
         for (int i = 1; i < 8; i++) { // Down to the right
             int rowToAdd = row - i;
             int colToAdd = col + i;
-            if (board.getPiece(myPosition) != null && rowToAdd > 0 && colToAdd > 0
-                    && rowToAdd < 9 && colToAdd < 9) {
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(rowToAdd, colToAdd), null));
+            ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
+            if (rowToAdd <= 0 || colToAdd <= 0 || rowToAdd >= 9 || colToAdd >= 9) break;
+            if (board.getPiece(newPos) == null) {
+                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+            }
+            else if (board.getPiece(newPos) != null
+                    && board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                break;
             }
             else break;
+
         }
 
         for (int i = 1; i < 8; i++) { // Down to the left
             int rowToAdd = row - i;
             int colToAdd = col - i;
-            if (board.getPiece(myPosition) != null && rowToAdd > 0 && colToAdd > 0
-                    && rowToAdd < 9 && colToAdd < 9) {
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(rowToAdd, colToAdd), null));
+            ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
+            if (rowToAdd <= 0 || colToAdd <= 0 || rowToAdd >= 9 || colToAdd >= 9) break;
+            if (board.getPiece(newPos) == null) {
+                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+            }
+            else if (board.getPiece(newPos) != null
+                    && board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                break;
             }
             else break;
         }
@@ -47,9 +66,15 @@ public class BishopMoveCalculator implements MovementCalculator {
         for (int i = 1; i < 8; i++) { // Up to the left
             int rowToAdd = row + i;
             int colToAdd = col - i;
-            if (board.getPiece(myPosition) != null && rowToAdd > 0 && colToAdd > 0
-                    && rowToAdd < 9 && colToAdd < 9) {
-                possibleMoves.add(new ChessMove(myPosition, new ChessPosition(rowToAdd, colToAdd), null));
+            ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
+            if (rowToAdd <= 0 || colToAdd <= 0 || rowToAdd >= 9 || colToAdd >= 9) break;
+            if (board.getPiece(newPos) == null) {
+                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+            }
+            else if (board.getPiece(newPos) != null
+                    && board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
+                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                break;
             }
             else break;
         }
