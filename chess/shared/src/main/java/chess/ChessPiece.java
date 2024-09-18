@@ -53,8 +53,38 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        switch (this.type){
+            case KING :
+                MovementCalculator kingMoves = new KingMoveCalculator();
+                kingMoves.moves(board, myPosition);
+                break;
+            case BISHOP:
+                MovementCalculator bishopMoves = new BishopMoveCalculator();
+                bishopMoves.moves(board, myPosition);
+            case ROOK:
+                MovementCalculator rookMoves = new RookMoveCalculator();
+                rookMoves.moves(board, myPosition);
+            case QUEEN:
+                MovementCalculator queenMoves = new QueenMoveCalculator();
+                queenMoves.moves(board, myPosition);
+            case PAWN:
+                MovementCalculator pawnMoves = new PawnMoveCalculator();
+                pawnMoves.moves(board, myPosition);
+            case KNIGHT:
+                MovementCalculator knightMoves = new KnightMoveCalculator();
+                knightMoves.moves(board, myPosition);
+            default:
+                System.out.println("Invalid Piece Type");
+        }
+
+
         if(this.type == PieceType.KING) {
-            MovementRule kingMoves = new KingMoveCalculator();
+            MovementCalculator kingMoves = new KingMoveCalculator();
+            kingMoves.moves(board, myPosition);
+        }
+
+        if(this.type == PieceType.KING) {
+            MovementCalculator kingMoves = new KingMoveCalculator();
             kingMoves.moves(board, myPosition);
         }
 
@@ -70,10 +100,12 @@ public class ChessPiece {
         return pieceColor.equals(piece.pieceColor) && type.equals(piece.type);
     }
 
-    /*
     @Override
-    public int hashcode() {
-
+    public int hashCode() {
+        int result = 17;
+        result = 71 * result + (pieceColor != null ? pieceColor.hashCode() : 0);
+        result = 71 * result + (type != null ? type.hashCode() : 0);
+        return result;
     }
-    */
+
 }
