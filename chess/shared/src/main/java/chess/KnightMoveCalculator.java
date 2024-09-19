@@ -10,18 +10,22 @@ public class KnightMoveCalculator implements MovementCalculator {
 
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
-        for (int i = -1; i < 2; i++){
+        for (int i = -1; i < 2; i++) {
             if (i == 0) continue;
             int rowToAdd = row + i;
             int colToAdd = col + 2;
             ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
 
-            if (newPos.getRow() > 0 && newPos.getRow() < 9) addMove(board, myPosition, newPos, possibleMoves);
+            if (rowToAdd > 0 && rowToAdd < 9 && colToAdd > 0 && colToAdd < 9) {
+                addMove(board, myPosition, newPos, possibleMoves);
+            }
 
             colToAdd = col - 2;
             newPos = new ChessPosition(rowToAdd, colToAdd);
 
-            if (newPos.getRow() > 0 && newPos.getRow() < 9) addMove(board, myPosition, newPos, possibleMoves);
+            if (rowToAdd > 0 && rowToAdd < 9 && colToAdd > 0 && colToAdd < 9) {
+                addMove(board, myPosition, newPos, possibleMoves);
+            }
         }
 
         for (int i = -1; i < 2; i++){
@@ -30,20 +34,26 @@ public class KnightMoveCalculator implements MovementCalculator {
             int colToAdd = col + i;
             ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
 
-            if (newPos.getRow() > 0 && newPos.getRow() < 9) addMove(board, myPosition, newPos, possibleMoves);
+            if (rowToAdd > 0 && rowToAdd < 9 && colToAdd > 0 && colToAdd < 9) {
+                addMove(board, myPosition, newPos, possibleMoves);
+            }
 
             if (row - 2 < 0) continue;
             rowToAdd = row - 2;
             newPos = new ChessPosition(rowToAdd, colToAdd);
 
-            if (newPos.getRow() > 0 && newPos.getRow() < 9) addMove(board, myPosition, newPos, possibleMoves);
+            if (rowToAdd > 0 && rowToAdd < 9 && colToAdd > 0 && colToAdd < 9) {
+                addMove(board, myPosition, newPos, possibleMoves);
+            }
         }
         return possibleMoves;
     }
 
     private void addMove(ChessBoard board, ChessPosition myPosition,
                          ChessPosition newPos, Collection<ChessMove> possibleMoves) {
-        if (board.getPiece(newPos) != null) {
+        if (board.getPiece(newPos) == null) {
+            possibleMoves.add(new ChessMove(myPosition, newPos, null));
+        } else if (board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor()){
             possibleMoves.add(new ChessMove(myPosition, newPos, null));
         }
     }
