@@ -88,11 +88,11 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        for (int i = 1; i < 9; i++) {
+        for (int i = 0; i < 8; i++) {
             str.append("|");
-            for (int j = 1; j < 9; j++){
-                if (getPiece(new ChessPosition(i, j)) != null) {
-                    str.append(getPiece(new ChessPosition(i, j)).toString()).append("|");
+            for (int j = 0; j < 8; j++){
+                if (getPiece(new ChessPosition(8-i, j+1)) != null) {
+                    str.append(getPiece(new ChessPosition(8-i, j+1)).toString()).append("|");
                 } else str.append(" |");
             }
             str.append("\n");
@@ -100,4 +100,7 @@ public class ChessBoard {
         return str.toString();
     }
 
+    public ChessPiece[][] getSquares() {
+        return squares;
+    }
 }
