@@ -60,16 +60,14 @@ public class ChessGame {
 
         for (ChessMove move : allMoves) {
             ChessGame testGame = new ChessGame(); // this.deepCopy();
-            testGame.setBoard(this.board.deepCopy()); // FIXME: This is updating this.board when I don't want it to
+            testGame.setBoard(this.board.deepCopy());
 
             try {
                 testGame.testMove(testGame.getBoard(), move);
-                if (!testGame.isInCheck(this.teamTurn)) {
+                if (!testGame.isInCheck(piece.getTeamColor())) {
                     onlyValid.add(move);
                 }
-                /*ChessMove newMove = new ChessMove(move.getEndPosition(),
-                        move.getStartPosition(), move.getPromotionPiece());
-                testGame.testMove(testGame.getBoard(), newMove);*/
+                
             } catch (InvalidMoveException e) {
                 System.out.println(e.toString());
                 System.out.println(move.toString());
