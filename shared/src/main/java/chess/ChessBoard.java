@@ -104,24 +104,33 @@ public class ChessBoard {
         return squares;
     }
 
-    public ChessPiece[][] makeMove(ChessPiece[][] squares, ChessMove move) throws InvalidMoveException {
-        ChessPosition start = move.getStartPosition();
-        ChessPosition end = move.getEndPosition();
+    public ChessBoard copyBoard(){
 
-        if (getPiece(start) == null) throw new InvalidMoveException();
+        ChessPiece[][] newSquares = squares.clone();
+        ChessBoard newBoard = new ChessBoard();
+        newBoard.setSquares(newSquares);
 
-        squares[8 - end.getRow()][end.getColumn() - 1] = getPiece(start);
-        squares[8 - start.getRow()][start.getColumn() - 1] = null; // Do we do this here?
-
-        return squares;
-
-    }
-
-    public ChessPiece[][] copyBoard(){
-        return this.squares.clone();
+        return newBoard;
     }
 
     public void setSquares(ChessPiece[][] squares) {
         this.squares = squares;
+    }
+
+    public ChessBoard deepCopy() {
+
+        ChessPiece[][] newSquares = new ChessPiece[8][8];
+
+        for (int i = 0; i < squares.length; i++){
+            for (int j = 0; j < squares[i].length; j++){
+                newSquares[i][j] = squares[i][j];
+
+            }
+        }
+
+        ChessBoard newBoard = new ChessBoard();
+        newBoard.setSquares(newSquares);
+
+        return newBoard;
     }
 }

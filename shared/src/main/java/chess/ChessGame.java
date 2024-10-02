@@ -59,14 +59,20 @@ public class ChessGame {
         Collection<ChessMove> onlyValid = new HashSet<>();
 
         for (ChessMove move : allMoves) {
-            ChessGame testGame = new ChessGame();
-            testGame.setBoard(this.board);
+            ChessGame testGame = new ChessGame(); // this.deepCopy();
+            testGame.setBoard(this.board.deepCopy()); // FIXME: This is updating this.board when I don't want it to
+
             try {
-                testGame.makeMove(move); // FIXME:: I get into a continuous loop here. Create testMove method?
-                testGame.isInCheck(this.teamTurn);
-                onlyValid.add(move);
+                testGame.testMove(testGame.getBoard(), move);
+                if (!testGame.isInCheck(this.teamTurn)) {
+                    onlyValid.add(move);
+                }
+                /*ChessMove newMove = new ChessMove(move.getEndPosition(),
+                        move.getStartPosition(), move.getPromotionPiece());
+                testGame.testMove(testGame.getBoard(), newMove);*/
             } catch (InvalidMoveException e) {
-                continue;
+                System.out.println(e.toString());
+                System.out.println(move.toString());
             }
         }
 
@@ -85,16 +91,30 @@ public class ChessGame {
 
         Collection<ChessMove> valids = validMoves(start);
 
-        if (this.board.getPiece(start) == null) throw new InvalidMoveException();
+        if (this.board.getPiece(start) == null) throw new InvalidMoveException("No piece at Start Position");
 
-        ChessPiece[][] newSquares = board.getSquares();
+        ChessPiece[][] newSquares = this.board.getSquares();
 
         if (valids.contains(move)){
-            newSquares[8 - end.getRow()][end.getColumn() - 1] = board.getPiece(start);
+            newSquares[8 - end.getRow()][end.getColumn() - 1] = this.board.getPiece(start);
             newSquares[8 - start.getRow()][start.getColumn() - 1] = null;
         }
         else throw new InvalidMoveException();
 
+    }
+
+    public ChessBoard testMove(ChessBoard myBoard, ChessMove move) throws InvalidMoveException {
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+
+        if (myBoard.getPiece(start) == null) throw new InvalidMoveException("No piece at Start Position");
+
+        ChessPiece[][] newSquares = myBoard.getSquares();
+
+        newSquares[8 - end.getRow()][end.getColumn() - 1] = myBoard.getPiece(start);
+        newSquares[8 - start.getRow()][start.getColumn() - 1] = null;
+
+        return myBoard;
     }
 
     /**
@@ -150,17 +170,16 @@ public class ChessGame {
         ChessPiece[][] squares = board.getSquares();
         if (!isInCheck(teamColor)) return false;
 
-        Collection<ChessMove> valids = new HashSet<>();
+        // Collection<ChessMove> valids = new HashSet<>();
 
         for (int i = 0; i < squares.length; i++) {
             for (int j = 0; j < squares[i].length; j++) {
                 ChessPosition pos = new ChessPosition(8-i, j+1);
-                if (validMoves(pos) != null) valids.addAll(validMoves(pos));
+                Collection<ChessMove> tempValids = validMoves(pos);
+                if (tempValids != null) return true;
 
             }
         }
-
-        if (valids.isEmpty()) return true;
 
         return false; //default value
     }
@@ -173,7 +192,20 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)) return false;
+
+        ChessPiece[][] squares = board.getSquares();
+
+        for (int i = 0; i < squares.length; i++) {
+            for (int j = 0; j < squares[i].length; j++) {
+                ChessPosition pos = new ChessPosition(8-i, j+1);
+                Collection<ChessMove> tempValids = validMoves(pos);
+                if (tempValids != null) return false;
+
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -195,4 +227,16 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return this.board;
     }
+
+    public ChessGame deepCopy(){
+        ChessGame newGame = new ChessGame();
+        ChessBoard newBoard = board.deepCopy();
+        newGame.setBoard(newBoard);
+
+        newGame.setTeamTurn(this.teamTurn);
+
+        return newGame;
+
+    }
+
 }
