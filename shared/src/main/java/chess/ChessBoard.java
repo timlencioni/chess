@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class ChessBoard {
 
-    private final ChessPiece[][] squares = new ChessPiece[8][8];
+    private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
         
@@ -102,5 +102,26 @@ public class ChessBoard {
 
     public ChessPiece[][] getSquares() {
         return squares;
+    }
+
+    public ChessPiece[][] makeMove(ChessPiece[][] squares, ChessMove move) throws InvalidMoveException {
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+
+        if (getPiece(start) == null) throw new InvalidMoveException();
+
+        squares[8 - end.getRow()][end.getColumn() - 1] = getPiece(start);
+        squares[8 - start.getRow()][start.getColumn() - 1] = null; // Do we do this here?
+
+        return squares;
+
+    }
+
+    public ChessPiece[][] copyBoard(){
+        return this.squares.clone();
+    }
+
+    public void setSquares(ChessPiece[][] squares) {
+        this.squares = squares;
     }
 }

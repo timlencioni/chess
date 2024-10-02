@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -53,8 +54,23 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
-        return piece.pieceMoves(getBoard(), startPosition);
-        // TODO: Delete any moves that cause the piece's team to move into check.
+        if (piece == null) return null;
+        Collection<ChessMove> allMoves = piece.pieceMoves(getBoard(), startPosition);
+        Collection<ChessMove> onlyValid = new HashSet<>();
+
+        for (ChessMove move : allMoves) {
+            ChessGame testGame = new ChessGame();
+            testGame.setBoard(this.board);
+            try {
+                testGame.makeMove(move); // FIXME:: I get into a continuous loop here. Create testMove method?
+                testGame.isInCheck(this.teamTurn);
+                onlyValid.add(move);
+            } catch (InvalidMoveException e) {
+                continue;
+            }
+        }
+
+        return onlyValid;
     }
 
     /**
@@ -64,7 +80,21 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+
+        Collection<ChessMove> valids = validMoves(start);
+
+        if (this.board.getPiece(start) == null) throw new InvalidMoveException();
+
+        ChessPiece[][] newSquares = board.getSquares();
+
+        if (valids.contains(move)){
+            newSquares[8 - end.getRow()][end.getColumn() - 1] = board.getPiece(start);
+            newSquares[8 - start.getRow()][start.getColumn() - 1] = null;
+        }
+        else throw new InvalidMoveException();
+
     }
 
     /**
@@ -98,9 +128,8 @@ public class ChessGame {
                     Collection<ChessMove> moves = squares[i][j].pieceMoves(board, new ChessPosition(8-i, j+1));
 
                     for (ChessMove move : moves) {
-                        if (move.getEndPosition().equals(kingPos)) {
-                            return true;
-                        }
+                        if (move.getEndPosition().equals(kingPos)) return true;
+
                     }
                 }
 
@@ -118,8 +147,22 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         // First verify isInCheck...
+        ChessPiece[][] squares = board.getSquares();
+        if (!isInCheck(teamColor)) return false;
 
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> valids = new HashSet<>();
+
+        for (int i = 0; i < squares.length; i++) {
+            for (int j = 0; j < squares[i].length; j++) {
+                ChessPosition pos = new ChessPosition(8-i, j+1);
+                if (validMoves(pos) != null) valids.addAll(validMoves(pos));
+
+            }
+        }
+
+        if (valids.isEmpty()) return true;
+
+        return false; //default value
     }
 
     /**
