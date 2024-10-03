@@ -119,4 +119,7 @@ public class ChessPiece {
         else return " ";
     }
 
+    public void setType(PieceType type) {
+        this.type = type;
+    }
 }
