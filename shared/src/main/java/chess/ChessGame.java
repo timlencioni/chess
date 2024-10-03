@@ -67,7 +67,7 @@ public class ChessGame {
                 if (!testGame.isInCheck(piece.getTeamColor())) {
                     onlyValid.add(move);
                 }
-                
+
             } catch (InvalidMoveException e) {
                 System.out.println(e.toString());
                 System.out.println(move.toString());
@@ -86,6 +86,8 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
+
+        if (this.board.getPiece(start).getTeamColor() != this.teamTurn) throw new InvalidMoveException("Not your turn");
 
         Collection<ChessMove> valids = validMoves(start);
 
@@ -174,12 +176,14 @@ public class ChessGame {
             for (int j = 0; j < squares[i].length; j++) {
                 ChessPosition pos = new ChessPosition(8-i, j+1);
                 Collection<ChessMove> tempValids = validMoves(pos);
-                if (tempValids != null) return true;
+                if (tempValids != null && board.getPiece(pos).getTeamColor() == teamColor && !tempValids.isEmpty()) {
+                    return false;
+                }
 
             }
         }
 
-        return false; //default value
+        return true; //default value
     }
 
     /**
@@ -198,7 +202,9 @@ public class ChessGame {
             for (int j = 0; j < squares[i].length; j++) {
                 ChessPosition pos = new ChessPosition(8-i, j+1);
                 Collection<ChessMove> tempValids = validMoves(pos);
-                if (tempValids != null) return false;
+                if (tempValids != null && board.getPiece(pos).getTeamColor() == teamColor && !tempValids.isEmpty()) {
+                    return false;
+                }
 
             }
         }
