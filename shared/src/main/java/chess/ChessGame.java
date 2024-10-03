@@ -32,10 +32,7 @@ public class ChessGame {
      *
      * @param team the team whose turn it is
      */
-    public void setTeamTurn(TeamColor team) {
-
-        this.teamTurn = team;
-    }
+    public void setTeamTurn(TeamColor team) { this.teamTurn = team; }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -80,7 +77,7 @@ public class ChessGame {
     /**
      * Makes a move in a chess game
      *
-     * @param move chess move to preform
+     * @param move chess move to perform
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
@@ -114,6 +111,13 @@ public class ChessGame {
 
     }
 
+    /**
+     * Makes a move in a virtual (test) chess game  for validMove to use to verify the validity of the given move
+     *
+     * @param myBoard a ChessBoard object to manipulate separate from the actual game
+     * @param move chess move to perform
+     * @throws InvalidMoveException if move is invalid
+     */
     public ChessBoard testMove(ChessBoard myBoard, ChessMove move) throws InvalidMoveException {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
@@ -148,9 +152,6 @@ public class ChessGame {
             }
             if (kingPos != null) break;
         }
-
-        // System.out.println(this.board.toString());
-        // System.out.println(kingPos.toString());
 
         // Verify all moves that end with the position of the teamColor's King
         for (int i = 0; i < squares.length; i++) {
@@ -241,17 +242,6 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return this.board;
-    }
-
-    public ChessGame deepCopy(){
-        ChessGame newGame = new ChessGame();
-        ChessBoard newBoard = board.deepCopy();
-        newGame.setBoard(newBoard);
-
-        newGame.setTeamTurn(this.teamTurn);
-
-        return newGame;
-
     }
 
 }
