@@ -86,20 +86,31 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
+        ChessPiece.PieceType promotion = move.getPromotionPiece();
 
+        if (this.board.getPiece(start) == null) throw new InvalidMoveException("No piece at Start Position");
         if (this.board.getPiece(start).getTeamColor() != this.teamTurn) throw new InvalidMoveException("Not your turn");
 
         Collection<ChessMove> valids = validMoves(start);
 
-        if (this.board.getPiece(start) == null) throw new InvalidMoveException("No piece at Start Position");
-
         ChessPiece[][] newSquares = this.board.getSquares();
 
         if (valids.contains(move)){
-            newSquares[8 - end.getRow()][end.getColumn() - 1] = this.board.getPiece(start);
+            ChessPiece newPiece = this.board.getPiece(start);
+
+            if (this.board.getPiece(start).getPieceType() == ChessPiece.PieceType.PAWN
+                    && (start.getRow() == 7 || start.getRow() == 2) && promotion != null) {
+                newPiece.setType(promotion);
+            }
+
+            newSquares[8 - end.getRow()][end.getColumn() - 1] = newPiece;
             newSquares[8 - start.getRow()][start.getColumn() - 1] = null;
+
         }
         else throw new InvalidMoveException();
+
+        if (this.teamTurn == TeamColor.WHITE) this.teamTurn = TeamColor.BLACK;
+        else this.teamTurn = TeamColor.WHITE;
 
     }
 
