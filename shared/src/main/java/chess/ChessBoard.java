@@ -104,15 +104,6 @@ public class ChessBoard {
         return squares;
     }
 
-    public ChessBoard copyBoard(){
-
-        ChessPiece[][] newSquares = squares.clone();
-        ChessBoard newBoard = new ChessBoard();
-        newBoard.setSquares(newSquares);
-
-        return newBoard;
-    }
-
     public void setSquares(ChessPiece[][] squares) {
         this.squares = squares;
     }
