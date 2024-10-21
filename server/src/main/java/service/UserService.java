@@ -1,8 +1,10 @@
 package service;
 
-import dataaccess.DataAccess;
 import dataaccess.*;
+import handler.UserException;
 import model.*;
+
+import java.util.UUID;
 
 public class UserService {
 
@@ -14,13 +16,29 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public AuthData register(UserData user) {
+    public AuthData register(UserData userData) throws UserException {
+        try {
+            // Pass to user DataAccessObject
+            userDAO.register(userData);
+
+            // Create new auth data
+            String newToken = UUID.randomUUID().toString();
+            AuthData newAuthData = new AuthData(userData.username(), newToken);
+
+            // Pass to auth DataAccessObject
+            authDAO.registerAuth(newAuthData);
+            return newAuthData;
+        }
+        catch (UserException e) {
+            // Throw exception from earlier
+            throw new UserException(e.getMessage());
+        }
+
+    }
+    public AuthData login(UserData userData) {
         //TODO
     }
-    public AuthData login(UserData user) {
-        //TODO
-    }
-    public void logout(AuthData auth) {
+    public void logout(AuthData authData) {
         //TODO
     }
 
