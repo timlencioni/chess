@@ -1,9 +1,11 @@
 package dataaccess;
 
 import handler.UserException;
+import model.AuthData;
 import model.UserData;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class UserDAO {
 
@@ -17,6 +19,20 @@ public class UserDAO {
         }
         else {
             usersMemDB.put(userData.username(), userData);
+        }
+    }
+
+    public void login(UserData userData) throws UserException {
+
+        if (usersMemDB.containsKey(userData.username())) {
+            if (!usersMemDB.get(userData.username()).password().equals(userData.password())) {
+
+                throw new UserException("Incorrect password");
+            }
+
+        }
+        else {
+            throw new UserException("User not registered");
         }
     }
 }

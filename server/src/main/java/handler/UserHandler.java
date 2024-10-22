@@ -36,4 +36,27 @@ public class UserHandler {
             // return "{ \"message\": \"Error: Username already taken\" }"; //TODO: toJson or record
         }
     }
+
+    public Object login(Request request, Response response) {
+
+        UserData userData = new Gson().fromJson(request.body(), UserData.class);
+
+        try {
+
+            AuthData authData = service.login(userData);
+            response.status(200);
+            String res = new Gson().toJson(authData);
+            response.body(res);
+            return res;
+        }
+        catch (UserException e) {
+
+            response.status(403);
+            Gson gson = new Gson();
+            HashMap<String, String> exc_map = new HashMap<String, String>();
+            exc_map.put("message", e.toString());
+            return gson.toJson(exc_map);
+        }
+
+    }
 }

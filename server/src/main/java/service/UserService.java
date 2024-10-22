@@ -21,13 +21,7 @@ public class UserService {
             // Pass to user DataAccessObject
             userDAO.register(userData);
 
-            // Create new auth data
-            String newToken = UUID.randomUUID().toString();
-            AuthData newAuthData = new AuthData(userData.username(), newToken);
-
-            // Pass to auth DataAccessObject
-            authDAO.registerAuth(newAuthData);
-            return newAuthData;
+            return createAuthData(userData);
         }
         catch (UserException e) {
             // Throw exception from earlier
@@ -35,12 +29,32 @@ public class UserService {
         }
 
     }
-    public AuthData login(UserData userData) {
-        //TODO
-        return new AuthData("user", "123");
+    public AuthData login(UserData userData) throws UserException {
+        try {
+            // Pass to user DataAccessObject
+            userDAO.login(userData);
+
+            return createAuthData(userData);
+
+        }
+        catch (UserException e) {
+            // Throw exception from earlier
+            throw new UserException(e.getMessage());
+        }
     }
-    public void logout(AuthData authData) {
+    public void logout(AuthData authData) throws UserException {
         //TODO
+    }
+
+    public AuthData createAuthData(UserData userData) {
+
+        // Create new auth data
+        String newToken = UUID.randomUUID().toString();
+        AuthData newAuthData = new AuthData(userData.username(), newToken);
+
+        // Pass to auth DataAccessObject
+        authDAO.registerAuth(newAuthData);
+        return newAuthData;
     }
 
 }
