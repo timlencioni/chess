@@ -36,4 +36,6 @@ public class UserDAO {
             throw new UserException("User not registered");
         }
     }
+
+    public void deleteAll() { usersMemDB.clear(); }
 }

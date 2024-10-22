@@ -6,5 +6,7 @@ import java.util.HashSet;
 
 public class GameDAO {
 
-    private final HashSet<GameData> games = new HashSet<>();
+    private final HashSet<GameData> gamesMemDB = new HashSet<>();
+
+    public void deleteAll() { gamesMemDB.clear(); }
 }
