@@ -4,6 +4,7 @@ import model.*;
 import service.UserService;
 import spark.*;
 import com.google.gson.Gson;
+import java.util.HashMap;
 
 public class UserHandler {
 
@@ -28,7 +29,11 @@ public class UserHandler {
         catch (UserException e) {
 
             response.status(403);
-            return "Error: Username taken"; //toJson or record
+            Gson gson = new Gson();
+            HashMap<String, String> exc_map = new HashMap<String, String>();
+            exc_map.put("message", e.toString());
+            return gson.toJson(exc_map);
+            // return "{ \"message\": \"Error: Username already taken\" }"; //TODO: toJson or record
         }
     }
 }

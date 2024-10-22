@@ -37,6 +37,7 @@ public class UserService {
     }
     public AuthData login(UserData userData) {
         //TODO
+        return new AuthData("user", "123");
     }
     public void logout(AuthData authData) {
         //TODO
