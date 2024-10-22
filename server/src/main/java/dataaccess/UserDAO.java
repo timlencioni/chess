@@ -5,7 +5,8 @@ import model.AuthData;
 import model.UserData;
 
 import java.util.HashMap;
-import java.util.UUID;
+
+// FIXME:: Move logic to UserService
 
 public class UserDAO {
 

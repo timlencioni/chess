@@ -42,8 +42,17 @@ public class UserService {
             throw new UserException(e.getMessage());
         }
     }
-    public void logout(AuthData authData) throws UserException {
-        //TODO
+    public void logout(String authToken) throws UserException {
+
+        if (authDAO.getAuthMemDB().containsKey(authToken)) {
+
+            authDAO.deleteToken(authToken);
+        }
+        else {
+
+            throw new UserException("Invalid AuthToken");
+        }
+
     }
 
     public AuthData createAuthData(UserData userData) {
