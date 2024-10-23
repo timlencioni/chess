@@ -39,7 +39,7 @@ public class GameService {
             return gameID;
         }
         else {
-            throw new GameException("Unauthorized", 401);
+            throw new GameException("Error: Unauthorized", 401);
         }
     }
 
@@ -47,13 +47,14 @@ public class GameService {
         //
         HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
         HashMap<Integer, GameData> gameDB = gameDAO.getGamesMemDB();
-        if (!gameDB.containsKey(joinGameData.gameID())) {
-            throw new GameException("Bad request", 400);
+        if (!gameDB.containsKey(joinGameData.gameID())
+                || joinGameData.playerColor() == null) {
+            throw new GameException("Error: Bad request", 400);
         }
 
         if ((joinGameData.playerColor().equals("WHITE") && gameDB.get(joinGameData.gameID()).whiteUsername() != null)
          || (joinGameData.playerColor().equals("BLACK") && gameDB.get(joinGameData.gameID()).blackUsername() != null)) {
-            throw new GameException("Side already taken", 403);
+            throw new GameException("Error: Side already taken", 403);
         }
 
 
@@ -63,7 +64,7 @@ public class GameService {
             gameDAO.addPlayer(joinGameData, userName);
         }
         else {
-            throw new GameException("Unauthorized", 401);
+            throw new GameException("Error: Unauthorized", 401);
         }
     }
 
@@ -84,7 +85,7 @@ public class GameService {
             return listOfGames;
         }
         else {
-            throw new GameException("Unauthorized", 401);
+            throw new GameException("Error: Unauthorized", 401);
         }
     }
 }

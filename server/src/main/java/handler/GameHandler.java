@@ -35,8 +35,9 @@ public class GameHandler {
         try {
 
             int gameID = service.createGame(authToken, gameName);
+            CreateGameData createGameData = new CreateGameData(gameID);
             response.status(200);
-            String res = new Gson().toJson(gameID);
+            String res = new Gson().toJson(createGameData);
             response.body(res);
             return res;
         }
@@ -54,7 +55,7 @@ public class GameHandler {
         try {
             service.joinGame(authToken, joinGameData);
             response.status(200);
-            String res = new Gson().toJson("{}");
+            String res = "{}";
             response.body(res);
             return res;
         }
@@ -70,8 +71,9 @@ public class GameHandler {
         try {
 
             Collection<ListGameData> games = service.listGames(authToken);
+            ListData list = new ListData(games);
             response.status(200);
-            String res = new Gson().toJson(games);
+            String res = new Gson().toJson(list);
             response.body(res);
             return res;
         }

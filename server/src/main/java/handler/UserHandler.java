@@ -66,7 +66,7 @@ public class UserHandler {
         try {
             service.logout(authToken);
             response.status(200);
-            String res = new Gson().toJson("");
+            String res = "{}";
             response.body(res);
             return res;
         }
