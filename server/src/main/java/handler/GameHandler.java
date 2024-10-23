@@ -68,6 +68,7 @@ public class GameHandler {
         String authToken = request.headers("authorization");
 
         try {
+
             Collection<ListGameData> games = service.listGames(authToken);
             response.status(200);
             String res = new Gson().toJson(games);
