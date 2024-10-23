@@ -3,8 +3,8 @@ package dataaccess;
 import model.GameData;
 import model.JoinGameData;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class GameDAO {
 
@@ -35,4 +35,6 @@ public class GameDAO {
         }
 
     }
+
+    public Collection<GameData> getAllGames() { return gamesMemDB.values(); }
 }

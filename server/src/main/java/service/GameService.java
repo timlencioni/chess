@@ -7,8 +7,8 @@ import model.AuthData;
 import model.GameData;
 import model.JoinGameData;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class GameService {
 
@@ -41,7 +41,7 @@ public class GameService {
     }
 
     public void joinGame(String authToken, JoinGameData joinGameData) throws GameException {
-
+        //
         HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
         HashMap<Integer, GameData> gameDB = gameDAO.getGamesMemDB();
         if (!gameDB.containsKey(joinGameData.gameID())) {
@@ -58,6 +58,19 @@ public class GameService {
             //
             String userName = authDB.get(authToken).userName();
             gameDAO.addPlayer(joinGameData, userName);
+        }
+        else {
+            throw new GameException("Unauthorized", 401);
+        }
+    }
+
+    public Collection<GameData> listGames(String authToken) throws GameException {
+        //
+        HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
+
+        if (authDB.containsKey(authToken)) {
+            //
+            return gameDAO.getAllGames();
         }
         else {
             throw new GameException("Unauthorized", 401);
