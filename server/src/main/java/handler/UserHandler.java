@@ -28,10 +28,10 @@ public class UserHandler {
         }
         catch (UserException e) {
 
-            response.status(403);
+            response.status(e.getErrorNum());
             Gson gson = new Gson();
             HashMap<String, String> exc_map = new HashMap<String, String>();
-            exc_map.put("message", e.toString());
+            exc_map.put("message", e.getMessage());
             return gson.toJson(exc_map);
         }
     }
@@ -50,10 +50,10 @@ public class UserHandler {
         }
         catch (UserException e) {
 
-            response.status(403);
+            response.status(e.getErrorNum());
             Gson gson = new Gson();
             HashMap<String, String> exc_map = new HashMap<String, String>();
-            exc_map.put("message", e.toString());
+            exc_map.put("message", e.getMessage());
             return gson.toJson(exc_map);
         }
 
@@ -66,15 +66,15 @@ public class UserHandler {
         try {
             service.logout(authToken);
             response.status(200);
-            String res = new Gson().toJson("{}");
+            String res = new Gson().toJson("");
             response.body(res);
             return res;
         }
         catch (UserException e) {
-            response.status(401);
+            response.status(e.getErrorNum());
             Gson gson = new Gson();
             HashMap<String, String> exc_map = new HashMap<String, String>();
-            exc_map.put("message", e.toString());
+            exc_map.put("message", e.getMessage());
             return gson.toJson(exc_map);
         }
     }

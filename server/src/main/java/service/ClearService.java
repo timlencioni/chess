@@ -20,21 +20,21 @@ public class ClearService {
             authDAO.deleteAll();
         }
         catch (Exception e){
-            throw new ClearException("AuthData did not clear");
+            throw new ClearException("Error: AuthData did not clear");
         }
 
         try {
             gameDAO.deleteAll();
         }
         catch (Exception e){
-            throw new ClearException("GameData did not clear");
+            throw new ClearException("Error: GameData did not clear");
         }
 
         try {
             userDAO.deleteAll();
         }
         catch (Exception e){
-            throw new ClearException("UserData did not clear");
+            throw new ClearException("Error: UserData did not clear");
         }
     }
 }

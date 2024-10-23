@@ -9,11 +9,11 @@ public class AuthDAO {
 
     public HashMap<String, AuthData> getAuthMemDB() { return authMemDB; }
 
-    public void registerAuth(AuthData authData) {
+    public void addAuth(AuthData authData) {
         authMemDB.put(authData.authToken(), authData);
     }
 
-    public void deleteToken(String authToken) { authMemDB.remove(authToken); }
+    public void deleteAuth(String authToken) { authMemDB.remove(authToken); }
 
     public void deleteAll() { authMemDB.clear(); }
 }

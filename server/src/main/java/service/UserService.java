@@ -18,39 +18,65 @@ public class UserService {
 
     public AuthData register(UserData userData) throws UserException {
         try {
+
+            if (userData.username() == null || userData.password() == null) {
+
+                throw new UserException("Error: Bad Request", 400);
+            }
+
             // Pass to user DataAccessObject
-            userDAO.register(userData);
+            if (userDAO.getUsersMemDB().containsKey(userData.username())) {
+
+                throw new UserException("Error: Username already taken!", 403);
+            }
+            else {
+                userDAO.addUser(userData);
+            }
+
 
             return createAuthData(userData);
         }
         catch (UserException e) {
             // Throw exception from earlier
-            throw new UserException(e.getMessage());
+            throw new UserException(e.getMessage(), e.getErrorNum());
         }
 
     }
     public AuthData login(UserData userData) throws UserException {
         try {
-            // Pass to user DataAccessObject
-            userDAO.login(userData);
 
-            return createAuthData(userData);
+            AuthData newAuthData;
+            if (userDAO.getUsersMemDB().containsKey(userData.username())) {
+                if (!userDAO.getUsersMemDB().get(userData.username()).password().equals(userData.password())) {
+
+                    throw new UserException("Error: Incorrect password", 401);
+                }
+                else {
+                    newAuthData = createAuthData(userData);
+                }
+
+            }
+            else {
+                throw new UserException("Error: User not registered", 401);
+            }
+
+            return newAuthData;
 
         }
         catch (UserException e) {
             // Throw exception from earlier
-            throw new UserException(e.getMessage());
+            throw new UserException(e.getMessage(), e.getErrorNum());
         }
     }
     public void logout(String authToken) throws UserException {
 
         if (authDAO.getAuthMemDB().containsKey(authToken)) {
 
-            authDAO.deleteToken(authToken);
+            authDAO.deleteAuth(authToken);
         }
         else {
 
-            throw new UserException("Invalid AuthToken");
+            throw new UserException("Error: Invalid AuthToken", 401);
         }
 
     }
@@ -62,7 +88,7 @@ public class UserService {
         AuthData newAuthData = new AuthData(userData.username(), newToken);
 
         // Pass to auth DataAccessObject
-        authDAO.registerAuth(newAuthData);
+        authDAO.addAuth(newAuthData);
         return newAuthData;
     }
 

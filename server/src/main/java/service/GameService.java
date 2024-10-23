@@ -59,7 +59,7 @@ public class GameService {
 
         if (authDB.containsKey(authToken)) {
             //
-            String userName = authDB.get(authToken).userName();
+            String userName = authDB.get(authToken).username();
             gameDAO.addPlayer(joinGameData, userName);
         }
         else {

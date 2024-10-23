@@ -19,7 +19,7 @@ public class ClearHandler {
         try {
             service.clear();
             response.status(200);
-            String res = new Gson().toJson("{}");
+            String res = "{}";
             response.body(res);
             return res;
         }
