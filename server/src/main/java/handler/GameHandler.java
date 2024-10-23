@@ -19,7 +19,7 @@ public class GameHandler {
     public Object createGame(Request request, Response response) {
 
         String authToken = request.headers("authorization");
-        String gameName = new Gson().fromJson(request.body(), String.class);
+        String gameName = request.body();
 
         try {
 
