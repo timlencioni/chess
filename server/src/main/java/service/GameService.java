@@ -6,9 +6,12 @@ import handler.GameException;
 import model.AuthData;
 import model.GameData;
 import model.JoinGameData;
+import model.ListGameData;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class GameService {
 
@@ -64,13 +67,21 @@ public class GameService {
         }
     }
 
-    public Collection<GameData> listGames(String authToken) throws GameException {
+    public Collection<ListGameData> listGames(String authToken) throws GameException {
         //
         HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
 
         if (authDB.containsKey(authToken)) {
             //
-            return gameDAO.getAllGames();
+            Collection<GameData> games = gameDAO.getAllGames();
+            Collection<ListGameData> listOfGames = new ArrayList<>();
+            for (GameData game : games) {
+
+                listOfGames.add(new ListGameData(game.gameID(), game.whiteUsername(),
+                                                 game.blackUsername(), game.gameName()));
+            }
+
+            return listOfGames;
         }
         else {
             throw new GameException("Unauthorized", 401);
