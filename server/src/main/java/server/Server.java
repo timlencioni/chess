@@ -17,6 +17,8 @@ public class Server {
         UserHandler userHandler = new UserHandler(userService);
         ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
         ClearHandler clearHandler = new ClearHandler(clearService);
+        GameService gameService = new GameService(gameDAO, authDAO);
+        GameHandler gameHandler = new GameHandler(gameService);
 
         Spark.port(desiredPort);
 
@@ -28,6 +30,8 @@ public class Server {
         Spark.delete("/session", userHandler::logout);
 
         Spark.delete("/db", clearHandler::clear);
+
+        Spark.post("/game", gameHandler::createGame);
 
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
