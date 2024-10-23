@@ -64,7 +64,7 @@ public class GameHandler {
     }
 
     public Object listGames(Request request, Response response) {
-        //
+        // FIXME:: do not want it to print out the ChessGame parameter
         String authToken = request.headers("authorization");
 
         try {
