@@ -202,20 +202,7 @@ public class ChessGame {
             return false;
         }
 
-        // Collection<ChessMove> valids = new HashSet<>();
-
-        for (int i = 0; i < squares.length; i++) {
-            for (int j = 0; j < squares[i].length; j++) {
-                ChessPosition pos = new ChessPosition(8-i, j+1);
-                Collection<ChessMove> tempValids = validMoves(pos);
-                if (tempValids != null && board.getPiece(pos).getTeamColor() == teamColor && !tempValids.isEmpty()) {
-                    return false;
-                }
-
-            }
-        }
-
-        return true; //default value
+        return verifyMoves(teamColor, squares);
     }
 
     /**
@@ -232,6 +219,10 @@ public class ChessGame {
 
         ChessPiece[][] squares = board.getSquares();
 
+        return verifyMoves(teamColor, squares);
+    }
+
+    private boolean verifyMoves(TeamColor teamColor, ChessPiece[][] squares) {
         for (int i = 0; i < squares.length; i++) {
             for (int j = 0; j < squares[i].length; j++) {
                 ChessPosition pos = new ChessPosition(8-i, j+1);

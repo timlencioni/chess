@@ -72,7 +72,9 @@ public class BishopMoveCalculator implements MovementCalculator {
             possibleMoves.add(new ChessMove(myPosition, newPos, null));
             return true;
         }
-        else return true;
+        else {
+            return true;
+        }
         return false;
     }
 
