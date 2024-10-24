@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class UserHandler {
 
-    private UserService service;
+    private final UserService service;
 
     public UserHandler(UserService service) {
         this.service = service;

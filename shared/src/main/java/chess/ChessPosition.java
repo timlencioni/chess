@@ -8,8 +8,8 @@ package chess;
  */
 public class ChessPosition {
 
-    private int row;
-    private int col;
+    private final int row;
+    private final int col;
 
     public ChessPosition(int row, int col) {
         this.row = row;
@@ -51,6 +51,6 @@ public class ChessPosition {
 
     @Override
     public String toString(){
-        return "(" + Integer.toString(row) + "," + Integer.toString(col) + ")";
+        return "(" + row + "," + col + ")";
     }
 }

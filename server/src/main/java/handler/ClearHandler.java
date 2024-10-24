@@ -22,8 +22,7 @@ public class ClearHandler {
             String res = "{}";
             response.body(res);
             return res;
-        }
-        catch (ClearException e){
+        } catch (ClearException e) {
             response.status(500);
             Gson gson = new Gson();
             HashMap<String, String> exc_map = new HashMap<String, String>();

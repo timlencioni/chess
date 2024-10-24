@@ -11,15 +11,13 @@ import java.util.HashMap;
 
 public class GameHandler {
 
-    private GameService service;
+    private final GameService service;
 
     public GameHandler(GameService service) {
-
         this.service = service;
     }
 
     private String handleException(Response response, GameException e) {
-
         response.status(e.getErrorNum());
         Gson gson = new Gson();
         HashMap<String, String> exc_map = new HashMap<String, String>();
@@ -33,15 +31,13 @@ public class GameHandler {
         String gameName = request.body();
 
         try {
-
             int gameID = service.createGame(authToken, gameName);
             CreateGameData createGameData = new CreateGameData(gameID);
             response.status(200);
             String res = new Gson().toJson(createGameData);
             response.body(res);
             return res;
-        }
-        catch (GameException e) {
+        } catch (GameException e) {
             return handleException(response, e);
         }
     }
@@ -58,8 +54,7 @@ public class GameHandler {
             String res = "{}";
             response.body(res);
             return res;
-        }
-        catch (GameException e) {
+        } catch (GameException e) {
             return handleException(response, e);
         }
     }
@@ -69,15 +64,13 @@ public class GameHandler {
         String authToken = request.headers("authorization");
 
         try {
-
             Collection<ListGameData> games = service.listGames(authToken);
             ListData list = new ListData(games);
             response.status(200);
             String res = new Gson().toJson(list);
             response.body(res);
             return res;
-        }
-        catch (GameException e) {
+        } catch (GameException e) {
             return handleException(response, e);
         }
     }

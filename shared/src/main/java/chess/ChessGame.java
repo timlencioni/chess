@@ -66,8 +66,8 @@ public class ChessGame {
                 }
 
             } catch (InvalidMoveException e) {
-                System.out.println(e.toString());
-                System.out.println(move.toString());
+                System.out.println(e);
+                System.out.println(move);
             }
         }
 

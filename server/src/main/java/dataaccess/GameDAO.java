@@ -10,11 +10,17 @@ public class GameDAO {
 
     private final HashMap<Integer, GameData> gamesMemDB = new HashMap<>();
 
-    public HashMap<Integer, GameData> getGamesMemDB() { return gamesMemDB; }
+    public HashMap<Integer, GameData> getGamesMemDB() {
+        return gamesMemDB;
+    }
 
-    public void deleteAll() { gamesMemDB.clear(); }
+    public void deleteAll() {
+        gamesMemDB.clear();
+    }
 
-    public void createGame(GameData gameData) { gamesMemDB.put(gameData.gameID(), gameData); }
+    public void createGame(GameData gameData) {
+        gamesMemDB.put(gameData.gameID(), gameData);
+    }
 
     public void addPlayer(JoinGameData joinGameData, String userName) {
 
@@ -22,11 +28,10 @@ public class GameDAO {
 
             GameData currGame = gamesMemDB.get(joinGameData.gameID());
             GameData newGameData;
-            if (joinGameData.playerColor().equals("WHITE")){
+            if (joinGameData.playerColor().equals("WHITE")) {
                 newGameData = new GameData(joinGameData.gameID(), userName, currGame.blackUsername(),
                         currGame.gameName(), currGame.game());
-            }
-            else {
+            } else {
                 newGameData = new GameData(joinGameData.gameID(), currGame.whiteUsername(), userName,
                         currGame.gameName(), currGame.game());
             }
@@ -36,5 +41,7 @@ public class GameDAO {
 
     }
 
-    public Collection<GameData> getAllGames() { return gamesMemDB.values(); }
+    public Collection<GameData> getAllGames() {
+        return gamesMemDB.values();
+    }
 }

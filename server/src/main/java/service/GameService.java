@@ -10,13 +10,12 @@ import model.ListGameData;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.ArrayList;
 
 public class GameService {
 
-    GameDAO gameDAO;
-    AuthDAO authDAO;
+    private final GameDAO gameDAO;
+    private final AuthDAO authDAO;
 
     public GameService(GameDAO gameDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
