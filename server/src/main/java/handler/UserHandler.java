@@ -28,12 +28,16 @@ public class UserHandler {
         }
         catch (UserException e) {
 
-            response.status(e.getErrorNum());
-            Gson gson = new Gson();
-            HashMap<String, String> exc_map = new HashMap<String, String>();
-            exc_map.put("message", e.getMessage());
-            return gson.toJson(exc_map);
+            return handleException(response, e);
         }
+    }
+
+    private String handleException(Response response, UserException e) {
+        response.status(e.getErrorNum());
+        Gson gson = new Gson();
+        HashMap<String, String> excMap = new HashMap<String, String>();
+        excMap.put("message", e.getMessage());
+        return gson.toJson(excMap);
     }
 
     public Object login(Request request, Response response) {
@@ -50,11 +54,7 @@ public class UserHandler {
         }
         catch (UserException e) {
 
-            response.status(e.getErrorNum());
-            Gson gson = new Gson();
-            HashMap<String, String> exc_map = new HashMap<String, String>();
-            exc_map.put("message", e.getMessage());
-            return gson.toJson(exc_map);
+            return handleException(response, e);
         }
 
     }
@@ -71,11 +71,7 @@ public class UserHandler {
             return res;
         }
         catch (UserException e) {
-            response.status(e.getErrorNum());
-            Gson gson = new Gson();
-            HashMap<String, String> exc_map = new HashMap<String, String>();
-            exc_map.put("message", e.getMessage());
-            return gson.toJson(exc_map);
+            return handleException(response, e);
         }
     }
 

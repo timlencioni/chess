@@ -3,22 +3,20 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
-import model.UserData;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClearServiceTest {
 
-    private static final AuthDAO authDAO = new AuthDAO();
-    private static final UserDAO userDAO = new UserDAO();
-    private static final GameDAO gameDAO = new GameDAO();
-    private static final ClearService service = new ClearService(authDAO, gameDAO, userDAO);
+    private static final AuthDAO AUTH_DAO = new AuthDAO();
+    private static final UserDAO USER_DAO = new UserDAO();
+    private static final GameDAO GAME_DAO = new GameDAO();
+    private static final ClearService CLEAR_SERVICE = new ClearService(AUTH_DAO, GAME_DAO, USER_DAO);
 
     @Test
     void clear() {
 
-        assertDoesNotThrow(service::clear, "Should not throw error");
+        assertDoesNotThrow(CLEAR_SERVICE::clear, "Should not throw error");
     }
 }

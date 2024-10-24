@@ -9,7 +9,6 @@ public class Server {
 
     public int run(int desiredPort) {
 
-        //FIXME:: Clean this up somehow...
         AuthDAO authDAO = new AuthDAO();
         GameDAO gameDAO = new GameDAO();
         UserDAO userDAO = new UserDAO();

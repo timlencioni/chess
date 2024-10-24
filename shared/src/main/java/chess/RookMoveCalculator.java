@@ -12,7 +12,6 @@ public class RookMoveCalculator implements MovementCalculator {
         Collection<ChessMove> possibleMoves = new HashSet<>();
 
         // for loops which runs through all diagonals in a given direction until it ends
-        //FIXME: Can we create a function that does the if else statement separately?
         for (int i = 1; i < 8; i++) { // Up
             int rowToAdd = row + i;
             ChessPosition newPos = new ChessPosition(rowToAdd, col);

@@ -2,7 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
-// FIXME:: update to account for promotions
+
 public class WhitePawnMoveCalculator implements MovementCalculator {
 
     @Override
@@ -44,9 +44,9 @@ public class WhitePawnMoveCalculator implements MovementCalculator {
     }
 
     private void addPromoPiece(Collection<ChessMove> set, ChessPosition myPosition, ChessPosition newPos) {
-        set.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
         set.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
-        set.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
         set.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
+        set.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
+        set.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
     }
 }
