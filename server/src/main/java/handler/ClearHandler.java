@@ -25,9 +25,9 @@ public class ClearHandler {
         } catch (ClearException e) {
             response.status(500);
             Gson gson = new Gson();
-            HashMap<String, String> exc_map = new HashMap<String, String>();
-            exc_map.put("message", e.toString());
-            return gson.toJson(exc_map);
+            HashMap<String, String> excMap = new HashMap<String, String>();
+            excMap.put("message", e.toString());
+            return gson.toJson(excMap);
         }
     }
 }

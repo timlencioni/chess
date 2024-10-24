@@ -11,7 +11,9 @@ public class KnightMoveCalculator implements MovementCalculator {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         for (int i = -1; i < 2; i++) {
-            if (i == 0) continue;
+            if (i == 0) {
+                continue;
+            }
             int rowToAdd = row + i;
             int colToAdd = col + 2;
             ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
@@ -29,7 +31,9 @@ public class KnightMoveCalculator implements MovementCalculator {
         }
 
         for (int i = -1; i < 2; i++){
-            if (i == 0) continue;
+            if (i == 0) {
+                continue;
+            }
             int rowToAdd = row + 2;
             int colToAdd = col + i;
             ChessPosition newPos = new ChessPosition(rowToAdd, colToAdd);
@@ -38,7 +42,9 @@ public class KnightMoveCalculator implements MovementCalculator {
                 addMove(board, myPosition, newPos, possibleMoves);
             }
 
-            if (row - 2 < 0) continue;
+            if (row - 2 < 0) {
+                continue;
+            }
             rowToAdd = row - 2;
             newPos = new ChessPosition(rowToAdd, colToAdd);
 

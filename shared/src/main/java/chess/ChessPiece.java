@@ -87,8 +87,12 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessPiece piece = (ChessPiece) o;
 
         return pieceColor.equals(piece.pieceColor) && type.equals(piece.type);
@@ -104,19 +108,45 @@ public class ChessPiece {
 
     @Override
     public String toString(){
-        if (type == PieceType.KING && pieceColor == ChessGame.TeamColor.WHITE) return "K";
-        else if (type == PieceType.KING && pieceColor == ChessGame.TeamColor.BLACK) return "k";
-        else if (type == PieceType.QUEEN && pieceColor == ChessGame.TeamColor.WHITE) return "Q";
-        else if (type == PieceType.QUEEN && pieceColor == ChessGame.TeamColor.BLACK) return "q";
-        else if (type == PieceType.BISHOP && pieceColor == ChessGame.TeamColor.WHITE) return "B";
-        else if (type == PieceType.BISHOP && pieceColor == ChessGame.TeamColor.BLACK) return "b";
-        else if (type == PieceType.KNIGHT && pieceColor == ChessGame.TeamColor.WHITE) return "N";
-        else if (type == PieceType.KNIGHT && pieceColor == ChessGame.TeamColor.BLACK) return "n";
-        else if (type == PieceType.ROOK && pieceColor == ChessGame.TeamColor.WHITE) return "R";
-        else if (type == PieceType.ROOK && pieceColor == ChessGame.TeamColor.BLACK) return "r";
-        else if (type == PieceType.PAWN && pieceColor == ChessGame.TeamColor.WHITE) return "P";
-        else if (type == PieceType.PAWN && pieceColor == ChessGame.TeamColor.BLACK) return "p";
-        else return " ";
+        if (type == PieceType.KING && pieceColor == ChessGame.TeamColor.WHITE) {
+            return "K";
+        }
+        else if (type == PieceType.KING && pieceColor == ChessGame.TeamColor.BLACK) {
+            return "k";
+        }
+        else if (type == PieceType.QUEEN && pieceColor == ChessGame.TeamColor.WHITE) {
+            return "Q";
+        }
+        else if (type == PieceType.QUEEN && pieceColor == ChessGame.TeamColor.BLACK) {
+            return "q";
+        }
+        else if (type == PieceType.BISHOP && pieceColor == ChessGame.TeamColor.WHITE) {
+            return "B";
+        }
+        else if (type == PieceType.BISHOP && pieceColor == ChessGame.TeamColor.BLACK) {
+            return "b";
+        }
+        else if (type == PieceType.KNIGHT && pieceColor == ChessGame.TeamColor.WHITE) {
+            return "N";
+        }
+        else if (type == PieceType.KNIGHT && pieceColor == ChessGame.TeamColor.BLACK) {
+            return "n";
+        }
+        else if (type == PieceType.ROOK && pieceColor == ChessGame.TeamColor.WHITE) {
+            return "R";
+        }
+        else if (type == PieceType.ROOK && pieceColor == ChessGame.TeamColor.BLACK) {
+            return "r";
+        }
+        else if (type == PieceType.PAWN && pieceColor == ChessGame.TeamColor.WHITE) {
+            return "P";
+        }
+        else if (type == PieceType.PAWN && pieceColor == ChessGame.TeamColor.BLACK) {
+            return "p";
+        }
+        else {
+            return " ";
+        }
     }
 
     public void setType(PieceType type) {

@@ -23,9 +23,7 @@ public class ChessMove {
     /**
      * @return ChessPosition of starting location
      */
-    public ChessPosition getStartPosition() {
-        return this.start;
-    }
+    public ChessPosition getStartPosition() { return this.start; }
 
     /**
      * @return ChessPosition of ending location
@@ -46,8 +44,12 @@ public class ChessMove {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessMove move = (ChessMove) o;
         return (start.equals(move.start) && end.equals(move.end)
                 && promotionPiece == move.promotionPiece);

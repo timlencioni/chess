@@ -24,12 +24,16 @@ public class BlackPawnMoveCalculator implements MovementCalculator {
                         && board.getPiece(newPos).getTeamColor() != board.getPiece(myPosition).getTeamColor()) {
                     if (row == 2) {
                         addPromoPiece(possibleMoves, myPosition, newPos);
-                    } else possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                    } else {
+                        possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                    }
                 }
             } else if (col == colToAdd && board.getPiece(newPos) == null) {
                 if (row == 2) {
                     addPromoPiece(possibleMoves, myPosition, newPos);
-                } else possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                } else {
+                    possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                }
             }
         }
 

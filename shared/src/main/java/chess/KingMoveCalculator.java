@@ -36,7 +36,9 @@ public class KingMoveCalculator implements MovementCalculator {
                     set.add(new ChessMove(currPos, new ChessPosition(rowToAdd, colToAdd), null));
                 }
             }
-            else set.add(new ChessMove(currPos, new ChessPosition(rowToAdd, colToAdd), null));
+            else {
+                set.add(new ChessMove(currPos, new ChessPosition(rowToAdd, colToAdd), null));
+            }
         }
     }
 }

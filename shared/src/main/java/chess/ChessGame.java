@@ -51,7 +51,9 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = board.getPiece(startPosition);
-        if (piece == null) return null;
+        if (piece == null) {
+            return null;
+        }
         Collection<ChessMove> allMoves = piece.pieceMoves(getBoard(), startPosition);
         Collection<ChessMove> onlyValid = new HashSet<>();
 
@@ -85,8 +87,12 @@ public class ChessGame {
         ChessPosition end = move.getEndPosition();
         ChessPiece.PieceType promotion = move.getPromotionPiece();
 
-        if (this.board.getPiece(start) == null) throw new InvalidMoveException("No piece at Start Position");
-        if (this.board.getPiece(start).getTeamColor() != this.teamTurn) throw new InvalidMoveException("Not your turn");
+        if (this.board.getPiece(start) == null) {
+            throw new InvalidMoveException("No piece at Start Position");
+        }
+        if (this.board.getPiece(start).getTeamColor() != this.teamTurn) {
+            throw new InvalidMoveException("Not your turn");
+        }
 
         Collection<ChessMove> valids = validMoves(start);
 
@@ -104,10 +110,16 @@ public class ChessGame {
             newSquares[8 - start.getRow()][start.getColumn() - 1] = null;
 
         }
-        else throw new InvalidMoveException();
+        else {
+            throw new InvalidMoveException();
+        }
 
-        if (this.teamTurn == TeamColor.WHITE) this.teamTurn = TeamColor.BLACK;
-        else this.teamTurn = TeamColor.WHITE;
+        if (this.teamTurn == TeamColor.WHITE) {
+            this.teamTurn = TeamColor.BLACK;
+        }
+        else {
+            this.teamTurn = TeamColor.WHITE;
+        }
 
     }
 
@@ -122,7 +134,9 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
 
-        if (myBoard.getPiece(start) == null) throw new InvalidMoveException("No piece at Start Position");
+        if (myBoard.getPiece(start) == null) {
+            throw new InvalidMoveException("No piece at Start Position");
+        }
 
         ChessPiece[][] newSquares = myBoard.getSquares();
 
@@ -145,12 +159,14 @@ public class ChessGame {
         for (int i = 0; i < squares.length; i++) {
             for (int j = 0; j < squares[i].length; j++) {
                 if (squares[i][j] != null && squares[i][j].getTeamColor() == teamColor
-                    && squares[i][j].getPieceType() == ChessPiece.PieceType.KING){
+                    && squares[i][j].getPieceType() == ChessPiece.PieceType.KING) {
                     kingPos = new ChessPosition(8 - i, j + 1);
                     break;
                 }
             }
-            if (kingPos != null) break;
+            if (kingPos != null) {
+                break;
+            }
         }
 
         // Verify all moves that end with the position of the teamColor's King
@@ -160,7 +176,9 @@ public class ChessGame {
                     Collection<ChessMove> moves = squares[i][j].pieceMoves(board, new ChessPosition(8-i, j+1));
 
                     for (ChessMove move : moves) {
-                        if (move.getEndPosition().equals(kingPos)) return true;
+                        if (move.getEndPosition().equals(kingPos)) {
+                            return true;
+                        }
 
                     }
                 }
@@ -180,7 +198,9 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         // First verify isInCheck...
         ChessPiece[][] squares = board.getSquares();
-        if (!isInCheck(teamColor)) return false;
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
 
         // Collection<ChessMove> valids = new HashSet<>();
 
@@ -206,7 +226,9 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (isInCheck(teamColor)) return false;
+        if (isInCheck(teamColor)) {
+            return false;
+        }
 
         ChessPiece[][] squares = board.getSquares();
 

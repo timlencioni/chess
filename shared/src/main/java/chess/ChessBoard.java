@@ -73,8 +73,12 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessBoard board = (ChessBoard) o;
 
         return Arrays.deepEquals(squares, board.squares);
@@ -93,7 +97,9 @@ public class ChessBoard {
             for (int j = 0; j < 8; j++){
                 if (getPiece(new ChessPosition(8-i, j+1)) != null) {
                     str.append(getPiece(new ChessPosition(8-i, j+1)).toString()).append("|");
-                } else str.append(" |");
+                } else {
+                    str.append(" |");
+                }
             }
             str.append("\n");
         }
