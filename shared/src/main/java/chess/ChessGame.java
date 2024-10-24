@@ -172,21 +172,29 @@ public class ChessGame {
         // Verify all moves that end with the position of the teamColor's King
         for (int i = 0; i < squares.length; i++) {
             for (int j = 0; j < squares[i].length; j++) {
-                if (squares[i][j] != null && squares[i][j].getTeamColor() != teamColor) {
-                    Collection<ChessMove> moves = squares[i][j].pieceMoves(board, new ChessPosition(8-i, j+1));
-
-                    for (ChessMove move : moves) {
-                        if (move.getEndPosition().equals(kingPos)) {
-                            return true;
-                        }
-
+                if (isOpponentPiece(squares[i][j], teamColor)) {
+                    if (canPieceAttackKing(squares[i][j], board, kingPos, i, j)) {
+                        return true;
                     }
                 }
-
             }
         }
-
+        
         return false; //default case
+    }
+
+    private boolean canPieceAttackKing(ChessPiece chessPiece, ChessBoard board, ChessPosition kingPos, int i, int j) {
+        Collection<ChessMove> moves = chessPiece.pieceMoves(board, new ChessPosition(8 - i, j + 1));
+        for (ChessMove move : moves) {
+            if (move.getEndPosition().equals(kingPos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isOpponentPiece(ChessPiece chessPiece, TeamColor teamColor) {
+        return chessPiece != null && chessPiece.getTeamColor() != teamColor;
     }
 
     /**
