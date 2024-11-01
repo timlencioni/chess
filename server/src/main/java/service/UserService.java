@@ -16,7 +16,7 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public AuthData register(UserData userData) throws UserException {
+    public AuthData register(UserData userData) throws UserException, DataAccessException {
         try {
 
             if (userData.username() == null || userData.password() == null) {
@@ -36,9 +36,12 @@ public class UserService {
         catch (UserException e) {
             throw new UserException(e.getMessage(), e.getErrorNum());
         }
+        catch (DataAccessException e) {
+            throw new DataAccessException(e.getMessage());
+        }
 
     }
-    public AuthData login(UserData userData) throws UserException {
+    public AuthData login(UserData userData) throws UserException, DataAccessException {
         try {
             AuthData newAuthData;
             if (userDAO.getUsersMemDB().containsKey(userData.username())) {
@@ -61,10 +64,13 @@ public class UserService {
         catch (UserException e) {
             throw new UserException(e.getMessage(), e.getErrorNum());
         }
+        catch (DataAccessException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
     public void logout(String authToken) throws UserException {
 
-        if (authDAO.getAuthMemDB().containsKey(authToken)) {
+        if (authDAO.containsAuthToken(authToken)) {
             authDAO.deleteAuth(authToken);
         }
         else {
@@ -73,7 +79,7 @@ public class UserService {
 
     }
 
-    public AuthData createAuthData(UserData userData) {
+    public AuthData createAuthData(UserData userData) throws DataAccessException {
         // Create new auth data
         String newToken = UUID.randomUUID().toString();
         AuthData newAuthData = new AuthData(userData.username(), newToken);

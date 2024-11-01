@@ -1,5 +1,6 @@
 package handler;
 
+import dataaccess.DataAccessException;
 import model.*;
 import service.UserService;
 import spark.*;
@@ -19,7 +20,6 @@ public class UserHandler {
         UserData userData = new Gson().fromJson(request.body(), UserData.class);
 
         try {
-
             AuthData authData = service.register(userData);
             response.status(200);
             String res = new Gson().toJson(authData);
@@ -27,9 +27,19 @@ public class UserHandler {
             return res;
         }
         catch (UserException e) {
-
             return handleException(response, e);
         }
+        catch (DataAccessException e) {
+            return handleDataException(response, e);
+        }
+    }
+
+    private Object handleDataException(Response response, DataAccessException e) {
+        response.status(500);
+        Gson gson = new Gson();
+        HashMap<String, String> excMap = new HashMap<String, String>();
+        excMap.put("message", e.getMessage());
+        return gson.toJson(excMap);
     }
 
     private String handleException(Response response, UserException e) {
@@ -55,6 +65,10 @@ public class UserHandler {
         catch (UserException e) {
 
             return handleException(response, e);
+        }
+        catch (DataAccessException e) {
+
+            return handleDataException(response, e);
         }
 
     }

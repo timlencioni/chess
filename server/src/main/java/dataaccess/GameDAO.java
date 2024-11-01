@@ -4,44 +4,19 @@ import model.GameData;
 import model.JoinGameData;
 
 import java.util.Collection;
-import java.util.HashMap;
 
-public class GameDAO {
+public interface GameDAO {
 
-    private final HashMap<Integer, GameData> gamesMemDB = new HashMap<>();
+    boolean containsGame(JoinGameData gameData);
 
-    public HashMap<Integer, GameData> getGamesMemDB() {
-        return gamesMemDB;
-    }
+    void deleteAll();
 
-    public void deleteAll() {
-        gamesMemDB.clear();
-    }
+    void createGame(GameData gameData);
 
-    public void createGame(GameData gameData) {
-        gamesMemDB.put(gameData.gameID(), gameData);
-    }
+    void addPlayer(JoinGameData joinGameData, String userName);
 
-    public void addPlayer(JoinGameData joinGameData, String userName) {
+    GameData getGame(int gameID);
 
-        if (gamesMemDB.containsKey(joinGameData.gameID())) {
+    Collection<GameData> getAllGames();
 
-            GameData currGame = gamesMemDB.get(joinGameData.gameID());
-            GameData newGameData;
-            if (joinGameData.playerColor().equals("WHITE")) {
-                newGameData = new GameData(joinGameData.gameID(), userName, currGame.blackUsername(),
-                        currGame.gameName(), currGame.game());
-            } else {
-                newGameData = new GameData(joinGameData.gameID(), currGame.whiteUsername(), userName,
-                        currGame.gameName(), currGame.game());
-            }
-            gamesMemDB.remove(currGame.gameID());
-            gamesMemDB.put(newGameData.gameID(), newGameData);
-        }
-
-    }
-
-    public Collection<GameData> getAllGames() {
-        return gamesMemDB.values();
-    }
 }

@@ -10,7 +10,7 @@ import dataaccess.*;
 
 class UserServiceTest {
 
-    private static AuthDAO authDAO;
+    private static MemAuthDAO authDAO;
     private static UserDAO userDAO;
     private static UserService service;
     private static UserData existingUser;
@@ -27,7 +27,7 @@ class UserServiceTest {
     @BeforeEach
     public void setUp() {
 
-        authDAO = new AuthDAO();
+        authDAO = new MemAuthDAO();
         userDAO = new UserDAO();
         service = new UserService(authDAO, userDAO);
 
@@ -35,7 +35,7 @@ class UserServiceTest {
             AuthData authData = service.register(existingUser);
             existingAuth = authData.authToken();
         }
-        catch (UserException e) {
+        catch (UserException | DataAccessException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -48,7 +48,7 @@ class UserServiceTest {
             assertNotNull(authData);
             assertEquals("kmp1800", authData.username());
         }
-        catch (UserException e) {
+        catch (UserException | DataAccessException e) {
             assertNull(e, "Error thrown not expected");
         }
 
@@ -69,7 +69,7 @@ class UserServiceTest {
             assertNotNull(authData);
             assertEquals("tlen20", authData.username());
         }
-        catch (UserException e) {
+        catch (UserException | DataAccessException e) {
             assertNull(e, "Error thrown not expected");
         }
     }

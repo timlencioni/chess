@@ -9,13 +9,13 @@ import model.JoinGameData;
 import model.ListGameData;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.ArrayList;
 
 public class GameService {
 
     private final GameDAO gameDAO;
     private final AuthDAO authDAO;
+    private int newGameID = 0;
 
     public GameService(GameDAO gameDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
@@ -24,18 +24,18 @@ public class GameService {
 
     public int createGame(String authToken, String gameName) throws GameException {
 
-        HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
-        HashMap<Integer, GameData> gameDB = gameDAO.getGamesMemDB();
+        // HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
+        // HashMap<Integer, GameData> gameDB = gameDAO.getGamesMemDB();
 
-        if (authDB.containsKey(authToken)) {
+        if (authDAO.containsAuthToken(authToken)) {
             //
-            int gameID = gameDB.size() + 1;
-            GameData gameData = new GameData(gameID,
+            // int gameID = newGameID;
+            GameData gameData = new GameData(newGameID,
                     null,null,
                     gameName, new ChessGame());
             gameDAO.createGame(gameData);
-
-            return gameID;
+            newGameID++;
+            return newGameID;
         }
         else {
             throw new GameException("Error: Unauthorized", 401);
@@ -44,22 +44,23 @@ public class GameService {
 
     public void joinGame(String authToken, JoinGameData joinGameData) throws GameException {
         //
-        HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
-        HashMap<Integer, GameData> gameDB = gameDAO.getGamesMemDB();
-        if (!gameDB.containsKey(joinGameData.gameID())
+        // HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
+        // HashMap<Integer, GameData> gameDB = gameDAO.getGamesMemDB();
+
+        if (!gameDAO.containsGame(joinGameData)
                 || joinGameData.playerColor() == null) {
             throw new GameException("Error: Bad request", 400);
         }
 
-        if ((joinGameData.playerColor().equals("WHITE") && gameDB.get(joinGameData.gameID()).whiteUsername() != null)
-         || (joinGameData.playerColor().equals("BLACK") && gameDB.get(joinGameData.gameID()).blackUsername() != null)) {
+        if ((joinGameData.playerColor().equals("WHITE") && gameDAO.getGame(joinGameData.gameID()).whiteUsername() != null)
+         || (joinGameData.playerColor().equals("BLACK") && gameDAO.getGame(joinGameData.gameID()).blackUsername() != null)) {
             throw new GameException("Error: Side already taken", 403);
         }
 
 
-        if (authDB.containsKey(authToken)) {
+        if (authDAO.containsAuthToken(authToken)) {
             //
-            String userName = authDB.get(authToken).username();
+            String userName = authDAO.getAuth(authToken).username();
             gameDAO.addPlayer(joinGameData, userName);
         }
         else {
@@ -69,9 +70,9 @@ public class GameService {
 
     public Collection<ListGameData> listGames(String authToken) throws GameException {
         //
-        HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
+        // HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
 
-        if (authDB.containsKey(authToken)) {
+        if (authDAO.containsAuthToken(authToken)) {
             //
             Collection<GameData> games = gameDAO.getAllGames();
             Collection<ListGameData> listOfGames = new ArrayList<>();

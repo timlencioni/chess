@@ -1,8 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import handler.GameException;
 import handler.UserException;
 import model.*;
@@ -12,13 +10,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
 
-    private static AuthDAO authDAO;
+    private static MemAuthDAO authDAO;
     private static GameDAO gameDAO;
     private static UserDAO userDAO;
     private static GameService service;
@@ -38,8 +35,8 @@ class GameServiceTest {
     @BeforeEach
     public void setUp() {
 
-        authDAO = new AuthDAO();
-        gameDAO = new GameDAO();
+        authDAO = new MemAuthDAO();
+        gameDAO = new MemGameDAO();
         userDAO = new UserDAO();
         service = new GameService(gameDAO, authDAO);
         userService = new UserService(authDAO, userDAO);
@@ -51,7 +48,7 @@ class GameServiceTest {
             whiteAuth = authDataWhite.authToken();
             blackAuth = authDataBlack.authToken();
         }
-        catch (UserException e) {
+        catch (UserException | DataAccessException e) {
 
             System.out.println(e.getMessage());
         }

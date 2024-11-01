@@ -1,26 +1,19 @@
 package dataaccess;
 
-import model.*;
+import model.AuthData;
 
 import java.util.HashMap;
 
-public class AuthDAO {
+public interface AuthDAO {
 
-    private final HashMap<String, AuthData> authMemDB = new HashMap<>();
+    boolean containsAuthToken(String authToken);
 
-    public HashMap<String, AuthData> getAuthMemDB() {
-        return authMemDB;
-    }
+    void addAuth(AuthData authData);
 
-    public void addAuth(AuthData authData) {
-        authMemDB.put(authData.authToken(), authData);
-    }
+    void deleteAuth(String authToken);
 
-    public void deleteAuth(String authToken) {
-        authMemDB.remove(authToken);
-    }
+    void deleteAll();
 
-    public void deleteAll() {
-        authMemDB.clear();
-    }
+    AuthData getAuth(String authToken);
+
 }

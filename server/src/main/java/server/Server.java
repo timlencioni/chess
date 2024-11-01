@@ -8,8 +8,9 @@ import handler.*;
 public class Server {
 
     public int run(int desiredPort) {
+        DatabaseManager manager = new DatabaseManager();
 
-        AuthDAO authDAO = new AuthDAO();
+        AuthDAO authDAO = new SqlAuthDAO();
         GameDAO gameDAO = new GameDAO();
         UserDAO userDAO = new UserDAO();
         UserService userService = new UserService(authDAO, userDAO);
