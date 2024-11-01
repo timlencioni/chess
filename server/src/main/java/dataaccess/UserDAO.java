@@ -3,21 +3,13 @@ package dataaccess;
 import handler.UserException;
 import model.UserData;
 
-import java.util.HashMap;
+public interface UserDAO {
 
-public class UserDAO {
+    boolean containsUser(String username);
 
-    private final HashMap<String, UserData> usersMemDB = new HashMap<>();
+    UserData getUser(String username);
 
-    public HashMap<String, UserData> getUsersMemDB() {
-        return usersMemDB;
-    }
+    void addUser(UserData userData);
 
-    public void addUser(UserData userData) throws UserException {
-        usersMemDB.put(userData.username(), userData);
-    }
-
-    public void deleteAll() {
-        usersMemDB.clear();
-    }
+    void deleteAll();
 }

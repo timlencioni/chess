@@ -11,7 +11,7 @@ import dataaccess.*;
 class UserServiceTest {
 
     private static MemAuthDAO authDAO;
-    private static UserDAO userDAO;
+    private static MemUserDAO userDAO;
     private static UserService service;
     private static UserData existingUser;
     private static UserData newUser;
@@ -28,7 +28,7 @@ class UserServiceTest {
     public void setUp() {
 
         authDAO = new MemAuthDAO();
-        userDAO = new UserDAO();
+        userDAO = new MemUserDAO();
         service = new UserService(authDAO, userDAO);
 
         try {

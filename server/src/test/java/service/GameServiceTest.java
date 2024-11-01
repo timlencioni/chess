@@ -17,7 +17,7 @@ class GameServiceTest {
 
     private static MemAuthDAO authDAO;
     private static GameDAO gameDAO;
-    private static UserDAO userDAO;
+    private static MemUserDAO userDAO;
     private static GameService service;
     private static UserService userService;
     private static UserData whitePlayer;
@@ -37,7 +37,7 @@ class GameServiceTest {
 
         authDAO = new MemAuthDAO();
         gameDAO = new MemGameDAO();
-        userDAO = new UserDAO();
+        userDAO = new MemUserDAO();
         service = new GameService(gameDAO, authDAO);
         userService = new UserService(authDAO, userDAO);
 

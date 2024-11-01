@@ -24,7 +24,7 @@ public class UserService {
             }
 
             // Pass to user DataAccessObject
-            if (userDAO.getUsersMemDB().containsKey(userData.username())) {
+            if (userDAO.containsUser(userData.username())) {
                 throw new UserException("Error: Username already taken!", 403);
             }
             else {
@@ -44,8 +44,8 @@ public class UserService {
     public AuthData login(UserData userData) throws UserException, DataAccessException {
         try {
             AuthData newAuthData;
-            if (userDAO.getUsersMemDB().containsKey(userData.username())) {
-                if (!userDAO.getUsersMemDB().get(userData.username()).password().equals(userData.password())) {
+            if (userDAO.containsUser(userData.username())) {
+                if (!userDAO.getUser(userData.username()).password().equals(userData.password())) {
 
                     throw new UserException("Error: Incorrect password", 401);
                 }

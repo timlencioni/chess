@@ -11,8 +11,9 @@ public class Server {
         DatabaseManager manager = new DatabaseManager();
 
         AuthDAO authDAO = new SqlAuthDAO();
-        GameDAO gameDAO = new GameDAO();
-        UserDAO userDAO = new UserDAO();
+        GameDAO gameDAO = new MemGameDAO();
+        UserDAO userDAO = new MemUserDAO();
+
         UserService userService = new UserService(authDAO, userDAO);
         UserHandler userHandler = new UserHandler(userService);
         ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
