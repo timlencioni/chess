@@ -7,7 +7,7 @@ import java.sql.*;
 public class SqlAuthDAO implements AuthDAO {
 
     public SqlAuthDAO() {
-        var statement = """            
+        String statement = """            
                     CREATE TABLE if NOT EXISTS AuthTable (
                                     username VARCHAR(255) NOT NULL,
                                     authToken VARCHAR(255) NOT NULL,
@@ -17,7 +17,7 @@ public class SqlAuthDAO implements AuthDAO {
 
     }
 
-    private void executeSqlUpdate(String statement) {
+    public static void executeSqlUpdate(String statement) {
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
@@ -37,10 +37,14 @@ public class SqlAuthDAO implements AuthDAO {
                 SELECT
                   EXISTS (
                     SELECT 1
-                    FROM users
+                    FROM UserTable
                     WHERE authToken = %s
                   ) AS token_exists""", authToken);
 
+        return verifyQuery(statement);
+    }
+
+    static boolean verifyQuery(String statement) {
         boolean tokenExists = false;
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
@@ -84,7 +88,7 @@ public class SqlAuthDAO implements AuthDAO {
 
     @Override
     public AuthData getAuth(String authToken) {
-        String statement = String.format("SELECT username, authToken FROM auth WHERE authToken=%s", authToken);
+        String statement = String.format("SELECT username, authToken FROM AuthTable WHERE authToken=%s", authToken);
 
         AuthData toReturn = null;
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
