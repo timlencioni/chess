@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import com.google.gson.Gson;
 
 public class SqlGameDAO implements GameDAO{
 
@@ -23,7 +24,19 @@ public class SqlGameDAO implements GameDAO{
                                     PRIMARY KEY (gameID)
                                     )""";
 
-        SqlAuthDAO.executeSqlUpdate(statement);
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+
+                prepareStatement.executeUpdate();
+
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -80,13 +93,21 @@ public class SqlGameDAO implements GameDAO{
                 prepareStatement.setString(2, gameData.whiteUsername());
                 prepareStatement.setString(3, gameData.blackUsername());
                 prepareStatement.setString(4, gameData.gameName());
-                prepareStatement.setString(5, gameData.game().toString());
+                prepareStatement.setString(5, serializeChessGame(gameData.game()));
                 prepareStatement.executeUpdate();
 
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String serializeChessGame(ChessGame game) {
+        return new Gson().toJson(game);
+    }
+
+    private ChessGame deserializeChessGame(String serialChessGame) {
+        return new Gson().fromJson(serialChessGame, ChessGame.class);
     }
 
     @Override
@@ -165,7 +186,7 @@ public class SqlGameDAO implements GameDAO{
             throw new RuntimeException(ex);
         }
         try (var connection = DatabaseManager.getConnection()) {
-            String statement = "SELECT gameID FROM GameTable";
+            String statement = "SELECT * FROM GameTable";
             try (var prepareStatement = connection.prepareStatement(statement)) {
                 ResultSet rs = prepareStatement.executeQuery();
                 while (rs.next()) {
@@ -173,8 +194,8 @@ public class SqlGameDAO implements GameDAO{
                     String whiteUser = rs.getString("whiteUsername");
                     String blackUser = rs.getString("blackUsername");
                     String gameName = rs.getString("gameName");
-                    ChessGame game = rs.getObject("game", ChessGame.class); // Fix this for phase 6
-                    toReturn.add(new GameData(gameID, whiteUser, blackUser, gameName, game));
+                    String game = rs.getString("chessGame");
+                    toReturn.add(new GameData(gameID, whiteUser, blackUser, gameName, deserializeChessGame(game)));
                 }
             }
         } catch (SQLException | DataAccessException e) {

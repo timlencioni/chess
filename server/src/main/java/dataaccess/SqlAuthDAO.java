@@ -14,7 +14,19 @@ public class SqlAuthDAO implements AuthDAO {
                                     authToken VARCHAR(255) NOT NULL,
                                     PRIMARY KEY (authToken)
                                     )""";
-        executeSqlUpdate(statement);
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+
+                prepareStatement.executeUpdate();
+
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -64,8 +76,8 @@ public class SqlAuthDAO implements AuthDAO {
         try (var connection = DatabaseManager.getConnection()) {
             String statement = "INSERT INTO AuthTable (username, authToken) VALUES(?, ?)";
             try (var prepareStatement = connection.prepareStatement(statement)) {
-                prepareStatement.setString(1, authData.authToken());
-                prepareStatement.setString(2, authData.username());
+                prepareStatement.setString(1, authData.username());
+                prepareStatement.setString(2, authData.authToken());
                 prepareStatement.executeUpdate();
             }
         } catch (SQLException | DataAccessException e) {
