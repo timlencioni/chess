@@ -5,7 +5,7 @@ import model.UserData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class SqlUserDAO implements UserDAO {
 
@@ -91,7 +91,7 @@ public class SqlUserDAO implements UserDAO {
 
             try (var prepareStatement = connection.prepareStatement(statement)) {
                 prepareStatement.setString(1, userData.username());
-                prepareStatement.setString(2, userData.password());
+                prepareStatement.setString(2, encryptPassword(userData.password()));
                 prepareStatement.setString(3, userData.email());
                 prepareStatement.executeUpdate();
 
@@ -99,6 +99,32 @@ public class SqlUserDAO implements UserDAO {
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean verifyUser(String username, String password) {
+        String hash = null;
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+            String statement = "SELECT password FROM UserTable WHERE username=?";
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+                ResultSet rs = prepareStatement.executeQuery();
+                if (rs.next()) {
+                    hash = rs.getString("password");
+                }
+
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return BCrypt.checkpw(password, hash);
+    }
+
+    private String encryptPassword(String password) {
+        String encryptedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        return encryptedPassword;
     }
 
     @Override

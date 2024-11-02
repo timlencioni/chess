@@ -11,5 +11,7 @@ public interface UserDAO {
 
     void addUser(UserData userData);
 
+    boolean verifyUser(String username, String password);
+
     void deleteAll();
 }

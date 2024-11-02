@@ -45,7 +45,7 @@ public class UserService {
         try {
             AuthData newAuthData;
             if (userDAO.containsUser(userData.username())) {
-                if (!userDAO.getUser(userData.username()).password().equals(userData.password())) {
+                if (!userDAO.verifyUser(userData.username(), userData.password())) {
 
                     throw new UserException("Error: Incorrect password", 401);
                 }
