@@ -23,8 +23,6 @@ public class GameService {
 
     public int createGame(String authToken, String gameName) throws GameException {
 
-        // HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
-        // HashMap<Integer, GameData> gameDB = gameDAO.getGamesMemDB();
 
         if (authDAO.containsAuthToken(authToken)) {
             //
@@ -42,9 +40,6 @@ public class GameService {
     }
 
     public void joinGame(String authToken, JoinGameData joinGameData) throws GameException {
-        //
-        // HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
-        // HashMap<Integer, GameData> gameDB = gameDAO.getGamesMemDB();
 
         if (!gameDAO.containsGame(joinGameData)
                 || joinGameData.playerColor() == null) {
@@ -68,8 +63,6 @@ public class GameService {
     }
 
     public Collection<ListGameData> listGames(String authToken) throws GameException {
-        //
-        // HashMap<String, AuthData> authDB = authDAO.getAuthMemDB();
 
         if (authDAO.containsAuthToken(authToken)) {
             //
