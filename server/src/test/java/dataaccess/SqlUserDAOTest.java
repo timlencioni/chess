@@ -16,10 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class SqlUserDAOTest {
 
     private static UserDAO userDAO;
-    private static UserService service;
     private static UserData existingUser;
     private static UserData newUser;
-    private static String existingAuth;
 
     @BeforeAll
     public static void init() {

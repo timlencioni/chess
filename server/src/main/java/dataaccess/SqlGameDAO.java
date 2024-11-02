@@ -19,7 +19,7 @@ public class SqlGameDAO implements GameDAO{
                                     gameID INT NOT NULL,
                                     whiteUsername VARCHAR(255),
                                     blackUsername VARCHAR(255),
-                                    gameName VARCHAR(255),
+                                    gameName VARCHAR(255) NOT NULL,
                                     chessGame TEXT,
                                     PRIMARY KEY (gameID)
                                     )""";
