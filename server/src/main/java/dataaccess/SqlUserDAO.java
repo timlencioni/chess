@@ -56,7 +56,7 @@ public class SqlUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) {
-        String statement = String.format("SELECT * FROM UserData WHERE username=%s", username);
+        String statement = "SELECT * FROM UserTable WHERE username=?";
 
         UserData toReturn = null;
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
@@ -65,6 +65,7 @@ public class SqlUserDAO implements UserDAO {
         try (var connection = DatabaseManager.getConnection()) {
 
             try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.setString(1, username);
                 ResultSet rs = prepareStatement.executeQuery();
                 if (rs.next()) {
                     toReturn = new UserData(rs.getString("username"),

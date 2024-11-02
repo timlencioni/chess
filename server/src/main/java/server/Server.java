@@ -8,7 +8,9 @@ import handler.*;
 public class Server {
 
     public int run(int desiredPort) {
-        DatabaseManager manager = new DatabaseManager();
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
 
         AuthDAO authDAO = new SqlAuthDAO();
         GameDAO gameDAO = new SqlGameDAO();

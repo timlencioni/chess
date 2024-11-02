@@ -14,7 +14,7 @@ public class GameService {
 
     private final GameDAO gameDAO;
     private final AuthDAO authDAO;
-    private int newGameID = 0;
+    private int newGameID = 1;
 
     public GameService(GameDAO gameDAO, AuthDAO authDAO) {
         this.gameDAO = gameDAO;
@@ -34,7 +34,7 @@ public class GameService {
                     gameName, new ChessGame());
             gameDAO.createGame(gameData);
             newGameID++;
-            return newGameID;
+            return newGameID - 1;
         }
         else {
             throw new GameException("Error: Unauthorized", 401);

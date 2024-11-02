@@ -50,7 +50,7 @@ public class SqlGameDAO implements GameDAO{
             try (var prepareStatement = connection.prepareStatement(statement)) {
                 ResultSet rs = prepareStatement.executeQuery();
                 while (rs.next()) {
-                    toReturn.add(rs.getString("gameID"));
+                    toReturn.add(rs.getInt("gameID"));
                 }
             }
         } catch (SQLException | DataAccessException e) {
@@ -117,15 +117,15 @@ public class SqlGameDAO implements GameDAO{
         }
         String statement = null;
         if (Objects.equals(joinGameData.playerColor(), "WHITE")){
-
-
             try (var connection = DatabaseManager.getConnection()) {
                 statement = """
                         UPDATE GameTable
-                        SET whiteUsername=%s
-                        WHERE gameID=%s
+                        SET whiteUsername=?
+                        WHERE gameID=?
                         """;
                 try (var prepareStatement = connection.prepareStatement(statement)) {
+                    prepareStatement.setString(1, userName);
+                    prepareStatement.setInt(2, joinGameData.gameID());
                     prepareStatement.executeUpdate();
                 }
             } catch (SQLException | DataAccessException e) {
@@ -139,10 +139,12 @@ public class SqlGameDAO implements GameDAO{
             try (var connection = DatabaseManager.getConnection()) {
                 statement = """
                         UPDATE GameTable
-                        SET blackUsername=%s
-                        WHERE gameID=%s
+                        SET blackUsername=?
+                        WHERE gameID=?
                         """;
                 try (var prepareStatement = connection.prepareStatement(statement)) {
+                    prepareStatement.setString(1, userName);
+                    prepareStatement.setInt(2, joinGameData.gameID());
                     prepareStatement.executeUpdate();
                 }
             } catch (SQLException | DataAccessException e) {
@@ -153,7 +155,7 @@ public class SqlGameDAO implements GameDAO{
 
     @Override
     public GameData getGame(int gameID) {
-        String statement = String.format("SELECT * FROM GameTable WHERE gameID=%s", gameID);
+        String statement = "SELECT * FROM GameTable WHERE gameID=?";
 
         GameData toReturn = null;
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
@@ -162,13 +164,14 @@ public class SqlGameDAO implements GameDAO{
         try (var connection = DatabaseManager.getConnection()) {
 
             try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.setInt(1, gameID);
                 ResultSet rs = prepareStatement.executeQuery();
                 if (rs.next()) {
                     toReturn = new GameData(rs.getInt("gameID"),
                             rs.getString("whiteUsername"),
                             rs.getString("blackUsername"),
                             rs.getString("gameName"),
-                            rs.getObject("chessGame", ChessGame.class)); // This will need to be fixed for phase 6
+                            deserializeChessGame(rs.getString("chessGame")));
                 }
             }
         } catch (SQLException | DataAccessException e) {
@@ -204,4 +207,5 @@ public class SqlGameDAO implements GameDAO{
 
         return toReturn;
     }
+
 }

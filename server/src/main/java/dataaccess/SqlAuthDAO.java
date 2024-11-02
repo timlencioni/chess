@@ -118,7 +118,7 @@ public class SqlAuthDAO implements AuthDAO {
 
     @Override
     public AuthData getAuth(String authToken) {
-        String statement = String.format("SELECT username, authToken FROM AuthTable WHERE authToken=%s", authToken);
+        String statement = "SELECT username, authToken FROM AuthTable WHERE authToken=?";
 
         AuthData toReturn = null;
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
@@ -127,6 +127,7 @@ public class SqlAuthDAO implements AuthDAO {
         try (var connection = DatabaseManager.getConnection()) {
 
             try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.setString(1, authToken);
                 ResultSet rs = prepareStatement.executeQuery();
                 if (rs.next()) {
                     toReturn = new AuthData(rs.getString("username"), authToken);

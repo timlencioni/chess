@@ -28,7 +28,9 @@ public class GameHandler {
     public Object createGame(Request request, Response response) {
 
         String authToken = request.headers("authorization");
-        String gameName = request.body();
+        //String gameName = request.body();
+        GameData tempGameData = new Gson().fromJson(request.body(), GameData.class);
+        String gameName = tempGameData.gameName();
 
         try {
             int gameID = service.createGame(authToken, gameName);
