@@ -30,22 +30,6 @@ public class SqlAuthDAO implements AuthDAO {
 
     }
 
-    public static void executeSqlUpdate(String statement) {
-        // FIXME:: Safest way is to use prepareStatement with ?'s, then use set___ methods
-        // FIXME:: Easiest way to potentially do that is to do everything separately in their own methods
-        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
-            throw new RuntimeException(ex);
-        }
-        try (var connection = DatabaseManager.getConnection()) {
-
-            try (var prepareStatement = connection.prepareStatement(statement)) {
-                prepareStatement.executeUpdate();
-            }
-        } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public boolean containsAuthToken(String authToken) {
         var toReturn = new ArrayList<>();
