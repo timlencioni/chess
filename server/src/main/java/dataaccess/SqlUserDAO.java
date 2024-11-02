@@ -110,6 +110,7 @@ public class SqlUserDAO implements UserDAO {
         try (var connection = DatabaseManager.getConnection()) {
             String statement = "SELECT password FROM UserTable WHERE username=?";
             try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.setString(1, username);
                 ResultSet rs = prepareStatement.executeQuery();
                 if (rs.next()) {
                     hash = rs.getString("password");
