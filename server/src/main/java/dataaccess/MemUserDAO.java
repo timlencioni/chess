@@ -23,6 +23,12 @@ public class MemUserDAO implements UserDAO{
         usersMemDB.put(userData.username(), userData);
     }
 
+    @Override
+    public boolean verifyUser(String username, String password) {
+        String passwordOnFile = usersMemDB.get(username).password();
+        return password.equals(passwordOnFile);
+    }
+
     public void deleteAll() {
         usersMemDB.clear();
     }
