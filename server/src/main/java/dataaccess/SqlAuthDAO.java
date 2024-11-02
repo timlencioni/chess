@@ -18,6 +18,8 @@ public class SqlAuthDAO implements AuthDAO {
     }
 
     public static void executeSqlUpdate(String statement) {
+        // FIXME:: Safest way is to use prepareStatement with ?'s, then use set___ methods
+        // FIXME:: Easiest way to potentially do that is to do everything separately in their own methods
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
@@ -37,7 +39,7 @@ public class SqlAuthDAO implements AuthDAO {
                 SELECT
                   EXISTS (
                     SELECT 1
-                    FROM UserTable
+                    FROM AuthTable
                     WHERE authToken = %s
                   ) AS token_exists""", authToken);
 
