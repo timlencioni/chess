@@ -3,6 +3,7 @@ package dataaccess;
 import model.AuthData;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class SqlAuthDAO implements AuthDAO {
 
@@ -35,57 +36,72 @@ public class SqlAuthDAO implements AuthDAO {
 
     @Override
     public boolean containsAuthToken(String authToken) {
-        String statement = String.format("""
-                SELECT
-                  EXISTS (
-                    SELECT 1
-                    FROM AuthTable
-                    WHERE authToken = %s
-                  ) AS token_exists""", authToken);
-
-        return verifyQuery(statement);
-    }
-
-    static boolean verifyQuery(String statement) {
-        boolean tokenExists = false;
+        var toReturn = new ArrayList<>();
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
         try (var connection = DatabaseManager.getConnection()) {
-
+            String statement = "SELECT authToken FROM AuthTable";
             try (var prepareStatement = connection.prepareStatement(statement)) {
                 ResultSet rs = prepareStatement.executeQuery();
-                if (rs.next()) {
-                    tokenExists = rs.getBoolean("token_exists");
+                while (rs.next()) {
+                    toReturn.add(rs.getString("authToken"));
                 }
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
 
-        return tokenExists;
+        return toReturn.contains(authToken);
     }
+
 
     @Override
     public void addAuth(AuthData authData) {
-        String statement = String.format("INSERT INTO AuthTable (username, authToken) VALUES(%s, %s)",
-                                          authData.username(), authData.authToken());
-
-        executeSqlUpdate(statement);
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+            String statement = "INSERT INTO AuthTable (username, authToken) VALUES(?, ?)";
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.setString(1, authData.authToken());
+                prepareStatement.setString(2, authData.username());
+                prepareStatement.executeUpdate();
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void deleteAuth(String authToken) {
-        String statement = String.format("DELETE FROM AuthTable WHERE authToken=%s", authToken);
-
-        executeSqlUpdate(statement);
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+            String statement = "DELETE FROM AuthTable WHERE authToken=?";
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.setString(1, authToken);
+                prepareStatement.executeUpdate();
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void deleteAll() {
-        String statement = "TRUNCATE AuthTable";
-
-        executeSqlUpdate(statement);
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+            String statement = "TRUNCATE AuthTable";
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.executeUpdate();
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

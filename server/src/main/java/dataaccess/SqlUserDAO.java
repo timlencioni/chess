@@ -4,31 +4,54 @@ import model.UserData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class SqlUserDAO implements UserDAO {
 
     public SqlUserDAO() {
         String statement = """            
                     CREATE TABLE if NOT EXISTS UserTable (
-                                    username VARCHAR(255) NOT NULL,
-                                    password VARCHAR(255) NOT NULL,
-                                    email VARCHAR(255) NOT NULL,
+                                    `username` VARCHAR(255) NOT NULL,
+                                    `password` VARCHAR(255) NOT NULL,
+                                    `email` VARCHAR(255) NOT NULL,
                                     PRIMARY KEY (username)
                                     )""";
-        SqlAuthDAO.executeSqlUpdate(statement);
+
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+
+                prepareStatement.executeUpdate();
+
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public boolean containsUser(String username) {
-        String statement = String.format("""
-                SELECT
-                  EXISTS (
-                    SELECT 1
-                    FROM UserTable
-                    WHERE username = %s
-                  ) AS token_exists""", username);
+        var toReturn = new ArrayList<>();
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+            String statement = "SELECT username FROM UserTable";
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+                ResultSet rs = prepareStatement.executeQuery();
+                while (rs.next()) {
+                    toReturn.add(rs.getString("username"));
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
-        return SqlAuthDAO.verifyQuery(statement);
+        return toReturn.contains(username);
     }
 
     @Override
@@ -58,16 +81,37 @@ public class SqlUserDAO implements UserDAO {
 
     @Override
     public void addUser(UserData userData) {
-        String statement = String.format("INSERT INTO UserTable (username, password, email) VALUES(%s, %s, %s)",
-                userData.username(), userData.password(), userData.email());
+        String statement = "INSERT INTO UserTable (username, password, email) VALUES (?,?,?)";
 
-        SqlAuthDAO.executeSqlUpdate(statement);
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.setString(1, userData.username());
+                prepareStatement.setString(2, userData.password());
+                prepareStatement.setString(3, userData.email());
+                prepareStatement.executeUpdate();
+
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void deleteAll() {
-        String statement = "TRUNCATE UserTable";
-
-        SqlAuthDAO.executeSqlUpdate(statement);
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        try (var connection = DatabaseManager.getConnection()) {
+            String statement = "TRUNCATE UserTable";
+            try (var prepareStatement = connection.prepareStatement(statement)) {
+                prepareStatement.executeUpdate();
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
