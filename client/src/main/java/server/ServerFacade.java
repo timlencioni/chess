@@ -52,6 +52,10 @@ public class ServerFacade {
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+        //FIXME:: Add authToken as header;
+        // logout, listGames, joinGame
+        // setRequestProperty()
+
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();

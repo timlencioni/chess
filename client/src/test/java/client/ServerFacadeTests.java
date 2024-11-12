@@ -1,5 +1,6 @@
 package client;
 
+import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
@@ -21,6 +22,12 @@ public class ServerFacadeTests {
     @AfterAll
     static void stopServer() {
         server.stop();
+    }
+
+    @Test
+    void register() throws Exception {
+        var authData = facade.register(new UserData("player1", "password", "p1@email.com"));
+        Assertions.assertTrue(authData.authToken().length() > 10);
     }
 
 
