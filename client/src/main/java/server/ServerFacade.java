@@ -18,49 +18,51 @@ public class ServerFacade {
 
     public AuthData register(UserData userData) throws ResponseException{
         var path = "/user";
-        return makeRequest("POST", path, userData, AuthData.class);
+        return makeRequest("POST", path, userData, AuthData.class, null);
     }
 
     public AuthData login(UserData userData) throws ResponseException{
         var path = "/session";
-        return makeRequest("POST", path, userData, AuthData.class);
+        return makeRequest("POST", path, userData, AuthData.class, null);
     }
 
-    public void logout() throws ResponseException{
+    public void logout(String authToken) throws ResponseException{
         var path = "/session";
-        makeRequest("DELETE", path, null, null);
+        makeRequest("DELETE", path, null, null, authToken);
     }
 
     public void clear() throws ResponseException{
         var path = "/db";
-        makeRequest("DELETE", path, null, null);
+        makeRequest("DELETE", path, null, null, null);
     }
 
-    public GameData createGame(GameData gameData) throws ResponseException{
+    public GameData createGame(GameData gameData, String authToken) throws ResponseException{
         var path = "/game";
-        return makeRequest("POST", path, gameData, GameData.class);
+        return makeRequest("POST", path, gameData, GameData.class, authToken);
     }
 
-    public JoinGameData joinGame(JoinGameData joinGameData) throws ResponseException {
+    public JoinGameData joinGame(JoinGameData joinGameData, String authToken) throws ResponseException {
         var path = "/game";
-        return makeRequest("PUT", path, joinGameData, JoinGameData.class);
+        return makeRequest("PUT", path, joinGameData, JoinGameData.class, authToken);
     }
 
-    public ListGameData listGames(ListGameData listGameData) throws ResponseException {
+    public ListData listGames(ListGameData listGameData, String authToken) throws ResponseException {
         var path = "/game";
-        return makeRequest("GET", path, listGameData, ListGameData.class);
+        return makeRequest("GET", path, listGameData, ListData.class, authToken);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
-        //FIXME:: Add authToken as header;
-        // logout, listGames, joinGame
-        // setRequestProperty()
-
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass,
+                              String authToken) throws ResponseException {
+        
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            if (authToken != null) {
+                http.setRequestProperty("authorization", authToken);
+            }
 
             writeBody(request, http);
             http.connect();
