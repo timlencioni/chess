@@ -1,5 +1,7 @@
 package server;
 
+import model.*;
+
 import com.google.gson.Gson;
 import exception.ResponseException;
 
@@ -14,7 +16,40 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    
+    public AuthData register(UserData userData) throws ResponseException{
+        var path = "/user";
+        return makeRequest("POST", path, userData, AuthData.class);
+    }
+
+    public AuthData login(UserData userData) throws ResponseException{
+        var path = "/session";
+        return makeRequest("POST", path, userData, AuthData.class);
+    }
+
+    public void logout() throws ResponseException{
+        var path = "/session";
+        makeRequest("DELETE", path, null, null);
+    }
+
+    public void clear() throws ResponseException{
+        var path = "/db";
+        makeRequest("DELETE", path, null, null);
+    }
+
+    public GameData createGame(GameData gameData) throws ResponseException{
+        var path = "/game";
+        return makeRequest("POST", path, gameData, GameData.class);
+    }
+
+    public JoinGameData joinGame(JoinGameData joinGameData) throws ResponseException {
+        var path = "/game";
+        return makeRequest("PUT", path, joinGameData, JoinGameData.class);
+    }
+
+    public ListGameData listGames(ListGameData listGameData) throws ResponseException {
+        var path = "/game";
+        return makeRequest("GET", path, listGameData, ListGameData.class);
+    }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
