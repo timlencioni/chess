@@ -1,6 +1,5 @@
 package server;
 
-import exception.ErrorResponse;
 import model.*;
 
 import com.google.gson.Gson;
