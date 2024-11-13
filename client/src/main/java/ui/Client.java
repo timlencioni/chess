@@ -78,6 +78,7 @@ public class Client {
                     case "create" -> createGame(params);
                     case "list" -> listGames(params);
                     case "join" -> joinGame(params);
+                    case "observe" -> observeGame(params);
                     case "quit", "q" -> "quit";
                     default -> help();
                 };
@@ -138,6 +139,7 @@ public class Client {
                 return e.getMessage();
             }
             LOGGED_IN = false;
+            authToken = null;
             return SETUP_SUCCESS + "Success";
         }
     }
@@ -156,7 +158,7 @@ public class Client {
             catch (ResponseException e) {
                 return e.getMessage();
             }
-            LOGGED_IN = true;
+
             return SETUP_SUCCESS + "Game Created Successfully";
         }
     }
@@ -209,5 +211,22 @@ public class Client {
 
             return SETUP_SUCCESS + "Good Luck!";
         }
+    }
+
+    private String observeGame(String[] params) {
+        if (params.length != 1) {
+            return SETUP_ERROR + "Must provide <ID> of game to watch!";
+        }
+        else {
+
+            drawBoard();
+
+            return SETUP_SUCCESS + "Have fun!";
+        }
+    }
+
+    // ------------------- MISC. METHODS -------------------
+    private void drawBoard() {
+        System.out.println(SETUP_ERROR + "Coming soon...");
     }
 }
