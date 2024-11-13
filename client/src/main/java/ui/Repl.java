@@ -8,8 +8,12 @@ public class Repl {
 
     private static Client client;
 
+    public Repl(int port) {
+        client = new Client(port);
+    }
+
     public void run() {
-        System.out.println("\uD83D\uDC36 Welcome to Chess. Enter help to get started.");
+        System.out.println("\uD83D\uDC36 Welcome to Chess. Enter 'help' to get started.");
         System.out.print(client.help());
 
         Scanner scanner = new Scanner(System.in);

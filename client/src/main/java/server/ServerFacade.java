@@ -10,10 +10,10 @@ import java.net.*;
 
 public class ServerFacade {
 
-    private final String serverUrl;
+    private final int port;
 
-    public ServerFacade(String url) {
-        serverUrl = url;
+    public ServerFacade(int port) {
+        this.port = port;
     }
 
     public AuthData register(UserData userData) throws ResponseException{
@@ -55,7 +55,7 @@ public class ServerFacade {
                               String authToken) throws ResponseException {
 
         try {
-            URL url = (new URI(serverUrl + path)).toURL();
+            URL url = (new URI("http://localhost:" + port + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
