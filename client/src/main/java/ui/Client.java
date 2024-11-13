@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import server.ServerFacade;
 
@@ -74,11 +76,31 @@ public class Client {
             else {
                 return switch (cmd) {
                     case "logout" -> logout(params);
+                    case "create" -> createGame(params);
                     default -> help();
                 };
             }
         } catch (ResponseException e) {
             return e.getMessage();
+        }
+    }
+
+    // -------------------- PRELOGIN METHODS -------------------
+
+    private String register(String[] params) throws ResponseException{
+        if (params.length != 3) {
+            return SETUP_ERROR + "Must have: <USERNAME> <PASSWORD> <EMAIL>";
+        }
+        else {
+            try {
+                AuthData authData = server.register(new UserData(params[0], params[1], params[2]));
+                authToken = authData.authToken();
+            }
+            catch (ResponseException e) {
+                return e.getMessage();
+            }
+            LOGGED_IN = true;
+            return SETUP_SUCCESS + "Success";
         }
     }
 
@@ -99,22 +121,7 @@ public class Client {
         }
     }
 
-    private String register(String[] params) throws ResponseException{
-        if (params.length != 3) {
-             return SETUP_ERROR + "Must have: <USERNAME> <PASSWORD> <EMAIL>";
-        }
-        else {
-            try {
-                AuthData authData = server.register(new UserData(params[0], params[1], params[2]));
-                authToken = authData.authToken();
-            }
-            catch (ResponseException e) {
-                return e.getMessage();
-            }
-            LOGGED_IN = true;
-            return SETUP_SUCCESS + "Success";
-        }
-    }
+    // ------------------- POSTLOGIN METHODS -------------------
 
     private String logout(String[] params) {
         if (params.length != 0) {
@@ -130,6 +137,25 @@ public class Client {
             }
             LOGGED_IN = false;
             return SETUP_SUCCESS + "Success";
+        }
+    }
+
+    private String createGame(String[] params) {
+
+        if (params.length != 1) {
+            return SETUP_ERROR + "Must provide <NAME>!";
+        }
+        else {
+            String name = params[0];
+            GameData newGame = new GameData(0, null, null, name, new ChessGame());
+            try {
+                server.createGame(newGame, authToken);
+            }
+            catch (ResponseException e) {
+                return e.getMessage();
+            }
+            LOGGED_IN = true;
+            return SETUP_SUCCESS + "Game Created Successfully";
         }
     }
 }
