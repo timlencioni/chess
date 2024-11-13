@@ -13,7 +13,9 @@ public class ServerFacade {
     private final int port;
 
     public ServerFacade(int port) {
+
         this.port = port;
+
     }
 
     public AuthData register(UserData userData) throws ResponseException{
@@ -46,9 +48,9 @@ public class ServerFacade {
         return makeRequest("PUT", path, joinGameData, JoinGameData.class, authToken);
     }
 
-    public ListData listGames(ListGameData listGameData, String authToken) throws ResponseException {
+    public ListData listGames(String authToken) throws ResponseException {
         var path = "/game";
-        return makeRequest("GET", path, listGameData, ListData.class, authToken);
+        return makeRequest("GET", path, null, ListData.class, authToken);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass,

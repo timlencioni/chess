@@ -118,7 +118,7 @@ public class SqlGameDAO implements GameDAO{
             throw new RuntimeException(ex);
         }
         String statement = null;
-        if (Objects.equals(joinGameData.playerColor(), "WHITE")){
+        if (joinGameData.playerColor().equalsIgnoreCase("WHITE")){
             try (var connection = DatabaseManager.getConnection()) {
                 statement = """
                         UPDATE GameTable

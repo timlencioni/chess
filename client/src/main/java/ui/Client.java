@@ -5,12 +5,11 @@ import static ui.EscapeSequences.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import chess.ChessGame;
 import exception.ResponseException;
-import model.AuthData;
-import model.GameData;
-import model.UserData;
+import model.*;
 import server.ServerFacade;
 
 public class Client {
@@ -77,6 +76,9 @@ public class Client {
                 return switch (cmd) {
                     case "logout" -> logout(params);
                     case "create" -> createGame(params);
+                    case "list" -> listGames(params);
+                    case "join" -> joinGame(params);
+                    case "quit", "q" -> "quit";
                     default -> help();
                 };
             }
@@ -156,6 +158,56 @@ public class Client {
             }
             LOGGED_IN = true;
             return SETUP_SUCCESS + "Game Created Successfully";
+        }
+    }
+
+
+    private String listGames(String[] params) {
+        if (params.length != 0) {
+            return SETUP_ERROR + "No arguments needed!";
+        }
+        else {
+            Collection<ListGameData> list;
+            try {
+                list = server.listGames(authToken).games();
+            }
+            catch (ResponseException e) {
+                return e.getMessage();
+            }
+            Collection<String> games = new ArrayList<>();
+            int listNum = 1;
+            System.out.println(SETUP + "Active Games:");
+            for (ListGameData game : list) {
+                String newString = String.format("%s %s %s %s", listNum, game.gameName(),
+                        game.whiteUsername(), game.blackUsername());
+                games.add(newString);
+                listNum++;
+                System.out.println(newString);
+            }
+
+            return " ";
+        }
+    }
+
+    private String joinGame(String[] params) {
+        if (params.length != 2) {
+            return SETUP_ERROR + "Must provide <ID> [WHITE|BLACK]!";
+        }
+        else {
+            String color = params[1];
+            System.out.println(color);
+            if (!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")) {
+                return SETUP_ERROR + "Team must be WHITE or BLACK";
+            }
+            JoinGameData joinGame = new JoinGameData(color, Integer.parseInt(params[0]));
+            try {
+                server.joinGame(joinGame, authToken);
+            }
+            catch (ResponseException e) {
+                return e.getMessage();
+            }
+
+            return SETUP_SUCCESS + "Good Luck!";
         }
     }
 }
