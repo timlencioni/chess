@@ -1,5 +1,6 @@
 package server;
 
+import exception.ErrorResponse;
 import model.*;
 
 import com.google.gson.Gson;
@@ -88,8 +89,23 @@ public class ServerFacade {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
+        // var message = http.getResponseMessage();
+
         if (!isSuccessful(status)) {
-            throw new ResponseException(status, "failure: " + status);
+            // InputStreamReader reader = new InputStreamReader(http.getErrorStream());
+            // ResponseException response = new Gson().fromJson(reader, ResponseException.class);
+            // throw new ResponseException(status, "failure: " + response.getMessage());
+
+            InputStreamReader reader = new InputStreamReader(http.getErrorStream());
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            StringBuilder errorMessage = new StringBuilder();
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                errorMessage.append(line).append("\n");
+            }
+
+            throw new ResponseException(status, errorMessage.toString());
         }
     }
 
