@@ -16,7 +16,7 @@ public class Client {
 
     private static ServerFacade server;
     private boolean LOGGED_IN;
-    private String authToken; //FIXME: Does this need to be a Collection?
+    private String authToken;
     private static final String SETUP = SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK;
     private static final String SETUP_ERROR = SET_TEXT_COLOR_RED + SET_BG_COLOR_BLACK;
     private static final String SETUP_SUCCESS = SET_TEXT_COLOR_GREEN + SET_BG_COLOR_BLACK;
@@ -34,11 +34,7 @@ public class Client {
                     "- to create an account");
             System.out.println(SETUP + "login <USERNAME> <PASSWORD> " + SET_TEXT_COLOR_LIGHT_GREY +
                     "- to play on existing account");
-            System.out.println(SETUP + "quit " + SET_TEXT_COLOR_LIGHT_GREY +
-                    "- to stop playing");
-            // System.out.println(SETUP + "help " + SET_TEXT_COLOR_LIGHT_GREY + "- to see possible commands");
 
-            return SETUP + "help " + SET_TEXT_COLOR_LIGHT_GREY + "- to see possible commands";
         }
         else {
             System.out.println(SETUP + "logout " + SET_TEXT_COLOR_LIGHT_GREY +
@@ -51,12 +47,11 @@ public class Client {
                     "- a game as white or black player");
             System.out.println(SETUP + "observe <ID> " + SET_TEXT_COLOR_LIGHT_GREY +
                     "- a game a non-player");
-            System.out.println(SETUP + "quit " + SET_TEXT_COLOR_LIGHT_GREY +
-                    "- to stop playing");
-            // System.out.println(SETUP + "help " + SET_TEXT_COLOR_LIGHT_GREY + "- to see possible commands");
 
-            return SETUP + "help " + SET_TEXT_COLOR_LIGHT_GREY + "- to see possible commands";
         }
+        System.out.println(SETUP + "quit " + SET_TEXT_COLOR_LIGHT_GREY +
+                "- to stop playing");
+        return SETUP + "help " + SET_TEXT_COLOR_LIGHT_GREY + "- to see possible commands";
     }
 
     public String eval(String line) {
@@ -133,13 +128,13 @@ public class Client {
         else {
             try {
                 server.logout(authToken);
-                authToken = null;
             }
             catch (ResponseException e) {
                 return e.getMessage();
             }
+
             LOGGED_IN = false;
-            authToken = null;
+            authToken = null; // Delete aut
             return SETUP_SUCCESS + "Success";
         }
     }
