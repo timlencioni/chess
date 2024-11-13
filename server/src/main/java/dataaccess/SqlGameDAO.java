@@ -24,6 +24,8 @@ public class SqlGameDAO implements GameDAO{
                                     PRIMARY KEY (gameID)
                                     )""";
 
+        deleteAll();
+
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }

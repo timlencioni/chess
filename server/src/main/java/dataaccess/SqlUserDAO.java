@@ -18,6 +18,8 @@ public class SqlUserDAO implements UserDAO {
                                     PRIMARY KEY (username)
                                     )""";
 
+        deleteAll();
+
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }

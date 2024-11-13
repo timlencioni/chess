@@ -14,6 +14,9 @@ public class SqlAuthDAO implements AuthDAO {
                                     authToken VARCHAR(255) NOT NULL,
                                     PRIMARY KEY (authToken)
                                     )""";
+
+        deleteAll();
+
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
