@@ -46,8 +46,10 @@ public class GameService {
             throw new GameException("Error: Bad request", 400);
         }
 
-        if ((joinGameData.playerColor().equals("WHITE") && gameDAO.getGame(joinGameData.gameID()).whiteUsername() != null)
-         || (joinGameData.playerColor().equals("BLACK") && gameDAO.getGame(joinGameData.gameID()).blackUsername() != null)) {
+        if ((joinGameData.playerColor().equalsIgnoreCase("WHITE")
+                && gameDAO.getGame(joinGameData.gameID()).whiteUsername() != null)
+         || (joinGameData.playerColor().equalsIgnoreCase("BLACK")
+                && gameDAO.getGame(joinGameData.gameID()).blackUsername() != null)) {
             throw new GameException("Error: Side already taken", 403);
         }
 
