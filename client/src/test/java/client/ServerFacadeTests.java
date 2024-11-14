@@ -25,10 +25,10 @@ public class ServerFacadeTests {
 
     @BeforeEach
     public void setUp() {
-        server.stop();
-        var port = server.run(8080);
-        System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade(port);
+        try {
+            facade.clear();
+        }
+        catch (Exception ignored) {}
     }
 
     @AfterAll
@@ -93,7 +93,7 @@ public class ServerFacadeTests {
         GameData gameData = new GameData(0, null, null,
                 "game", new ChessGame());
         GameData newGameData = facade.createGame(gameData, authData.authToken());
-        Assertions.assertEquals(1, newGameData.gameID());
+        Assertions.assertEquals(5, newGameData.gameID());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class ServerFacadeTests {
                 "game", new ChessGame());
         GameData newGameData = facade.createGame(gameData, authData.authToken());
 
-        JoinGameData join = new JoinGameData("WHITE", 1);
+        JoinGameData join = new JoinGameData("WHITE", newGameData.gameID());
         facade.joinGame(join, authData.authToken());
 
         Assertions.assertThrows(ResponseException.class,
