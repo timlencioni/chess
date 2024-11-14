@@ -13,7 +13,7 @@ import server.ServerFacade;
 public class Client {
 
     private static ServerFacade server;
-    private boolean LOGGED_IN;
+    private boolean loggedIn;
     private String authToken;
     private static final String SETUP = SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK;
     private static final String SETUP_ERROR = SET_TEXT_COLOR_RED + SET_BG_COLOR_BLACK;
@@ -23,13 +23,13 @@ public class Client {
 
     public Client(int port){
         server = new ServerFacade(port);
-        LOGGED_IN = false;
+        loggedIn = false;
         //authTokens = new ArrayList<>();
         authToken = null;
     }
 
     public String help() {
-        if (!LOGGED_IN){
+        if (!loggedIn){
             System.out.println(SETUP + "register <USERNAME> <PASSWORD> <EMAIL> " + SET_TEXT_COLOR_LIGHT_GREY +
                     "- to create an account");
             System.out.println(SETUP + "login <USERNAME> <PASSWORD> " + SET_TEXT_COLOR_LIGHT_GREY +
@@ -59,7 +59,7 @@ public class Client {
             var tokens = line.toLowerCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            if (!LOGGED_IN) {
+            if (!loggedIn) {
                 return switch (cmd) {
                     case "register" -> register(params);
                     case "quit" -> "quit";
@@ -97,7 +97,7 @@ public class Client {
             catch (ResponseException e) {
                 return e.getMessage();
             }
-            LOGGED_IN = true;
+            loggedIn = true;
             return SETUP_SUCCESS + "Success";
         }
     }
@@ -114,7 +114,7 @@ public class Client {
             catch (ResponseException e) {
                 return e.getMessage();
             }
-            LOGGED_IN = true;
+            loggedIn = true;
             return SETUP_SUCCESS + "Success";
         }
     }
@@ -133,7 +133,7 @@ public class Client {
                 return e.getMessage();
             }
 
-            LOGGED_IN = false;
+            loggedIn = false;
             authToken = null; // Delete aut
             return SETUP_SUCCESS + "Success";
         }
