@@ -2,12 +2,10 @@ package ui;
 
 import static ui.EscapeSequences.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import chess.ChessBoard;
-import chess.ChessGame;
+import chess.*;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
@@ -206,7 +204,8 @@ public class Client {
                 return e.getMessage();
             }
 
-            drawBoard(new ChessBoard(), color);
+            if (color.equalsIgnoreCase("white")){ drawBoardWhite(new ChessBoard()); }
+            else { drawBoardBlack(new ChessBoard()); }
 
             return SETUP_SUCCESS + "Good Luck!";
         }
@@ -218,26 +217,83 @@ public class Client {
         }
         else {
             int id = Integer.parseInt(params[0]);
-            drawBoard(new ChessBoard(), "WHITE");
+            // need to use id to get the correct game to observe
+
+            drawBoardWhite(new ChessBoard());
 
             return SETUP_SUCCESS + "Have fun!";
         }
     }
 
     // ------------------- MISC. METHODS -------------------
-    private void drawBoard(ChessBoard board, String orientation) {
+    private void drawBoardWhite(ChessBoard board) {
         StringBuilder printBoard = new StringBuilder();
-        if (orientation.equalsIgnoreCase("WHITE")) {
-            printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ a  b  c  d  e  f  g  h _\n");
-            for (int i = 1; i <= BOARD_SIZE; i++){
-                for (int j = 1; j <= BOARD_SIZE; j++)
-                    // TODO: Use board to get the pieces in their respective squares
+        board.resetBoard();
+        ChessPiece[][] squares = board.getSquares();
 
-                    printBoard.append(BLACK_PAWN);
+        printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ a  b  c  d  e  f  g  h _\n");
+        for (int i = 0; i < BOARD_SIZE; i++){
+            printBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+            printBoard.append(8 - i);
+            printBoard.append(SET_TEXT_COLOR_WHITE);
+            for (int j = 0; j < BOARD_SIZE; j++){
+                setBGColor(printBoard, i, j);
+
+                printBoard.append(getCharacter(squares[i][j]));
             }
+            printBoard.append(RESET_BG_COLOR + "\n");
         }
 
+        System.out.println(printBoard);
+    }
+
+    private void drawBoardBlack(ChessBoard board) {
+        StringBuilder printBoard = new StringBuilder();
+        board.resetBoard(); // Remove in Phase 6
+        ChessPiece[][] squares = board.getSquares();
+
+        printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ h  g  f  e  d  c  b  a _\n");
+        for (int i = 0; i < BOARD_SIZE; i++){
+            printBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+            printBoard.append(i + 1);
+            printBoard.append(SET_TEXT_COLOR_WHITE);
+            for (int j = 0; j < BOARD_SIZE; j++){
+
+                setBGColor(printBoard, i, j);
+                printBoard.append(getCharacter(squares[7 - i][j]));
+            }
+            printBoard.append(RESET_BG_COLOR + "\n");
+        }
 
         System.out.println(printBoard);
+    }
+
+    private void setBGColor(StringBuilder printBoard, int i, int j) {
+        int row = i % 2;
+        int col = j % 2;
+
+        if (row == 0 && col == 0) { printBoard.append(SET_BG_COLOR_GREEN); }
+        else if (row == 0 && col == 1) { printBoard.append(SET_BG_COLOR_DARK_GREEN); }
+        else if (row == 1 && col == 0) { printBoard.append(SET_BG_COLOR_DARK_GREEN); }
+        else if (row == 1 && col == 1) { printBoard.append(SET_BG_COLOR_GREEN); }
+    }
+
+    private String getCharacter(ChessPiece chessPiece) {
+        if (chessPiece == null) { return "   "; }
+        ChessPiece.PieceType type = chessPiece.getPieceType();
+        ChessGame.TeamColor pieceColor = chessPiece.getTeamColor();
+        if (type == ChessPiece.PieceType.KING && pieceColor == ChessGame.TeamColor.WHITE) { return WHITE_KING; }
+        else if (type == ChessPiece.PieceType.KING && pieceColor == ChessGame.TeamColor.BLACK) { return BLACK_KING; }
+        else if (type == ChessPiece.PieceType.QUEEN && pieceColor == ChessGame.TeamColor.WHITE) { return WHITE_QUEEN; }
+        else if (type == ChessPiece.PieceType.QUEEN && pieceColor == ChessGame.TeamColor.BLACK) { return BLACK_QUEEN; }
+        else if (type == ChessPiece.PieceType.BISHOP && pieceColor == ChessGame.TeamColor.WHITE) { return WHITE_BISHOP; }
+        else if (type == ChessPiece.PieceType.BISHOP && pieceColor == ChessGame.TeamColor.BLACK) { return BLACK_BISHOP; }
+        else if (type == ChessPiece.PieceType.KNIGHT && pieceColor == ChessGame.TeamColor.WHITE) { return WHITE_KNIGHT; }
+        else if (type == ChessPiece.PieceType.KNIGHT && pieceColor == ChessGame.TeamColor.BLACK) { return BLACK_KNIGHT; }
+        else if (type == ChessPiece.PieceType.ROOK && pieceColor == ChessGame.TeamColor.WHITE) { return WHITE_ROOK; }
+        else if (type == ChessPiece.PieceType.ROOK && pieceColor == ChessGame.TeamColor.BLACK) { return BLACK_ROOK; }
+        else if (type == ChessPiece.PieceType.PAWN && pieceColor == ChessGame.TeamColor.WHITE) { return WHITE_PAWN; }
+        else if (type == ChessPiece.PieceType.PAWN && pieceColor == ChessGame.TeamColor.BLACK) {return BLACK_PAWN; }
+        else { return "  "; }
     }
 }
