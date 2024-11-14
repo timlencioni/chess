@@ -27,7 +27,7 @@ public class Repl {
                 System.out.print(SET_TEXT_COLOR_WHITE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
-                System.out.print(msg);
+                System.out.print(SET_TEXT_COLOR_RED + SET_BG_COLOR_BLACK + msg);
             }
         }
         System.out.println();

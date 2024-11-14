@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.JsonObject;
 import model.*;
 
 import com.google.gson.Gson;
@@ -7,6 +8,8 @@ import exception.ResponseException;
 
 import java.io.*;
 import java.net.*;
+
+import static ui.EscapeSequences.*;
 
 public class ServerFacade {
 
@@ -91,6 +94,7 @@ public class ServerFacade {
 
         if (!isSuccessful(status)) {
             InputStreamReader reader = new InputStreamReader(http.getErrorStream());
+            InputStream error = http.getErrorStream();
             BufferedReader bufferedReader = new BufferedReader(reader);
             StringBuilder errorMessage = new StringBuilder();
             String line;
@@ -98,8 +102,12 @@ public class ServerFacade {
             while ((line = bufferedReader.readLine()) != null) {
                 errorMessage.append(line).append("\n");
             }
+            reader.close();
 
-            throw new ResponseException(status, errorMessage.toString());
+            JsonObject jsonObject = new Gson().fromJson(errorMessage.toString(), JsonObject.class);
+
+            // System.out.println(SET_BG_COLOR_BLACK + SET_TEXT_COLOR_RED);
+            throw new ResponseException(status, jsonObject.get("message").getAsString());
         }
     }
 

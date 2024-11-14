@@ -112,7 +112,7 @@ public class Client {
                 authToken = authData.authToken();
             }
             catch (ResponseException e) {
-                return e.getMessage();
+                return SETUP_ERROR + e.getMessage();
             }
             loggedIn = true;
             return SETUP_SUCCESS + "Success";
@@ -172,7 +172,7 @@ public class Client {
                 return e.getMessage();
             }
             // Collection<String> games = new ArrayList<>();
-            int listNum = 1;
+            int listNum = 0;
             System.out.println(SETUP + "Active Games:");
             for (ListGameData game : list) {
                 String newString = String.format("%s %s %s %s", listNum, game.gameName(),
@@ -191,7 +191,7 @@ public class Client {
             return SETUP_ERROR + "Must provide <ID> [WHITE|BLACK]!";
         }
         else {
-            int id = Integer.parseInt(params[0]);
+            int id = Integer.parseInt(params[0]) + 1;
             String color = params[1];
             if (!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")) {
                 return SETUP_ERROR + "Team must be WHITE or BLACK";
