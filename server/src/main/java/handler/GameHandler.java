@@ -17,11 +17,11 @@ public class GameHandler {
         this.service = service;
     }
 
-    private String handleException(Response response, GameException e) {
-        response.status(e.getErrorNum());
+    private String handleGameException(Response response, GameException gameException) {
+        response.status(gameException.getErrorNum());
         Gson gson = new Gson();
         HashMap<String, String> excMap = new HashMap<String, String>();
-        excMap.put("message", e.getMessage());
+        excMap.put("message", gameException.getMessage());
         return gson.toJson(excMap);
     }
 
@@ -40,7 +40,7 @@ public class GameHandler {
             response.body(res);
             return res;
         } catch (GameException e) {
-            return handleException(response, e);
+            return handleGameException(response, e);
         }
     }
 
@@ -57,7 +57,7 @@ public class GameHandler {
             response.body(res);
             return res;
         } catch (GameException e) {
-            return handleException(response, e);
+            return handleGameException(response, e);
         }
     }
 
@@ -73,7 +73,7 @@ public class GameHandler {
             response.body(res);
             return res;
         } catch (GameException e) {
-            return handleException(response, e);
+            return handleGameException(response, e);
         }
     }
 }

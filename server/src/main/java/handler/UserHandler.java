@@ -27,7 +27,7 @@ public class UserHandler {
             return res;
         }
         catch (UserException e) {
-            return handleException(response, e);
+            return handleUserException(response, e);
         }
         catch (DataAccessException e) {
             return handleDataException(response, e);
@@ -42,11 +42,11 @@ public class UserHandler {
         return gson.toJson(excMap);
     }
 
-    private String handleException(Response response, UserException e) {
-        response.status(e.getErrorNum());
+    private String handleUserException(Response response, UserException userException) {
+        response.status(userException.getErrorNum());
         Gson gson = new Gson();
         HashMap<String, String> excMap = new HashMap<String, String>();
-        excMap.put("message", e.getMessage());
+        excMap.put("message", userException.getMessage());
         return gson.toJson(excMap);
     }
 
@@ -64,7 +64,7 @@ public class UserHandler {
         }
         catch (UserException e) {
 
-            return handleException(response, e);
+            return handleUserException(response, e);
         }
         catch (DataAccessException e) {
 
@@ -85,7 +85,7 @@ public class UserHandler {
             return res;
         }
         catch (UserException e) {
-            return handleException(response, e);
+            return handleUserException(response, e);
         }
     }
 
