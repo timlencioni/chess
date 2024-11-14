@@ -29,7 +29,7 @@ public class SqlAuthDAO implements AuthDAO {
             throw new RuntimeException(e);
         }
 
-        deleteAll();
+        // deleteAll();
 
     }
 

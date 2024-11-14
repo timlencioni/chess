@@ -32,7 +32,7 @@ public class SqlUserDAO implements UserDAO {
             throw new RuntimeException(e);
         }
 
-        deleteAll();
+        // deleteAll();
     }
 
     @Override

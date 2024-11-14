@@ -38,7 +38,7 @@ public class SqlGameDAO implements GameDAO{
             throw new RuntimeException(e);
         }
 
-        deleteAll();
+        // deleteAll();
     }
 
     @Override
