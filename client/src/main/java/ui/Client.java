@@ -5,8 +5,8 @@ import static ui.EscapeSequences.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
@@ -20,6 +20,8 @@ public class Client {
     private static final String SETUP = SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK;
     private static final String SETUP_ERROR = SET_TEXT_COLOR_RED + SET_BG_COLOR_BLACK;
     private static final String SETUP_SUCCESS = SET_TEXT_COLOR_GREEN + SET_BG_COLOR_BLACK;
+
+    private static final int BOARD_SIZE = 8;
 
     public Client(int port){
         server = new ServerFacade(port);
@@ -171,13 +173,13 @@ public class Client {
             catch (ResponseException e) {
                 return e.getMessage();
             }
-            Collection<String> games = new ArrayList<>();
+            // Collection<String> games = new ArrayList<>();
             int listNum = 1;
             System.out.println(SETUP + "Active Games:");
             for (ListGameData game : list) {
                 String newString = String.format("%s %s %s %s", listNum, game.gameName(),
                         game.whiteUsername(), game.blackUsername());
-                games.add(newString);
+                // games.add(newString);
                 listNum++;
                 System.out.println(newString);
             }
@@ -191,18 +193,20 @@ public class Client {
             return SETUP_ERROR + "Must provide <ID> [WHITE|BLACK]!";
         }
         else {
+            int id = Integer.parseInt(params[0]);
             String color = params[1];
-            System.out.println(color);
             if (!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")) {
                 return SETUP_ERROR + "Team must be WHITE or BLACK";
             }
-            JoinGameData joinGame = new JoinGameData(color, Integer.parseInt(params[0]));
+            JoinGameData joinGame = new JoinGameData(color, id);
             try {
                 server.joinGame(joinGame, authToken);
             }
             catch (ResponseException e) {
                 return e.getMessage();
             }
+
+            drawBoard(new ChessBoard(), color);
 
             return SETUP_SUCCESS + "Good Luck!";
         }
@@ -213,15 +217,27 @@ public class Client {
             return SETUP_ERROR + "Must provide <ID> of game to watch!";
         }
         else {
-
-            drawBoard();
+            int id = Integer.parseInt(params[0]);
+            drawBoard(new ChessBoard(), "WHITE");
 
             return SETUP_SUCCESS + "Have fun!";
         }
     }
 
     // ------------------- MISC. METHODS -------------------
-    private void drawBoard() {
-        System.out.println(SETUP_ERROR + "Coming soon...");
+    private void drawBoard(ChessBoard board, String orientation) {
+        StringBuilder printBoard = new StringBuilder();
+        if (orientation.equalsIgnoreCase("WHITE")) {
+            printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ a  b  c  d  e  f  g  h _\n");
+            for (int i = 1; i <= BOARD_SIZE; i++){
+                for (int j = 1; j <= BOARD_SIZE; j++)
+                    // TODO: Use board to get the pieces in their respective squares
+
+                    printBoard.append(BLACK_PAWN);
+            }
+        }
+
+
+        System.out.println(printBoard);
     }
 }
