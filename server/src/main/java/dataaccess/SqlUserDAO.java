@@ -18,8 +18,6 @@ public class SqlUserDAO implements UserDAO {
                                     PRIMARY KEY (username)
                                     )""";
 
-        deleteAll();
-
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
@@ -33,6 +31,8 @@ public class SqlUserDAO implements UserDAO {
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
+
+        deleteAll();
     }
 
     @Override

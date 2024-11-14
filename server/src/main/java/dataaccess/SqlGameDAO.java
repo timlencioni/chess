@@ -24,8 +24,6 @@ public class SqlGameDAO implements GameDAO{
                                     PRIMARY KEY (gameID)
                                     )""";
 
-        deleteAll();
-
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
@@ -39,6 +37,8 @@ public class SqlGameDAO implements GameDAO{
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
+
+        deleteAll();
     }
 
     @Override

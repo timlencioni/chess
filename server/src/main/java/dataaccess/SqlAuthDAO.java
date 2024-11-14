@@ -15,8 +15,6 @@ public class SqlAuthDAO implements AuthDAO {
                                     PRIMARY KEY (authToken)
                                     )""";
 
-        deleteAll();
-
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
@@ -30,6 +28,8 @@ public class SqlAuthDAO implements AuthDAO {
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
         }
+
+        deleteAll();
 
     }
 
