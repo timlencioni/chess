@@ -130,7 +130,7 @@ public class Client {
                 server.logout(authToken);
             }
             catch (ResponseException e) {
-                return e.getMessage();
+                return SETUP_ERROR + e.getMessage();
             }
 
             loggedIn = false;
@@ -151,7 +151,7 @@ public class Client {
                 server.createGame(newGame, authToken);
             }
             catch (ResponseException e) {
-                return e.getMessage();
+                return SETUP_ERROR + e.getMessage();
             }
 
             return SETUP_SUCCESS + "Game Created Successfully";
@@ -169,14 +169,17 @@ public class Client {
                 list = server.listGames(authToken).games();
             }
             catch (ResponseException e) {
-                return e.getMessage();
+                return SETUP_ERROR + e.getMessage();
             }
             // Collection<String> games = new ArrayList<>();
             int listNum = 0;
             System.out.println(SETUP + "Active Games:");
+            System.out.println(SETUP + SET_TEXT_UNDERLINE + "id \tName \tWhite \tBlack" + RESET_TEXT_UNDERLINE);
             for (ListGameData game : list) {
-                String newString = String.format("%s %s %s %s", listNum, game.gameName(),
-                        game.whiteUsername(), game.blackUsername());
+                String whiteName = game.whiteUsername() == null ? "None" : game.whiteUsername();
+                String blackName = game.blackUsername() == null ? "None" : game.blackUsername();
+                String newString = String.format("%s \t%s \t%s \t%s", listNum, game.gameName(),
+                        whiteName, blackName);
                 // games.add(newString);
                 listNum++;
                 System.out.println(newString);
@@ -191,7 +194,13 @@ public class Client {
             return SETUP_ERROR + "Must provide <ID> [WHITE|BLACK]!";
         }
         else {
-            int id = Integer.parseInt(params[0]) + 1;
+            int id;
+            try {
+                id = Integer.parseInt(params[0]) + 1;
+            }
+            catch (Exception e) {
+                return SETUP_ERROR + "Provide game's list id number!";
+            }
             String color = params[1];
             if (!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")) {
                 return SETUP_ERROR + "Team must be WHITE or BLACK";
@@ -201,7 +210,7 @@ public class Client {
                 server.joinGame(joinGame, authToken);
             }
             catch (ResponseException e) {
-                return e.getMessage();
+                return SETUP_ERROR + e.getMessage();
             }
 
             if (color.equalsIgnoreCase("white")){ drawBoardWhite(new ChessBoard()); }
@@ -241,9 +250,10 @@ public class Client {
 
                 printBoard.append(getCharacter(squares[i][j]));
             }
-            printBoard.append(RESET_BG_COLOR + "\n");
+            printBoard.append(RESET_BG_COLOR + SET_TEXT_COLOR_LIGHT_GREY + (8 - i) + "\n");
         }
 
+        printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ a  b  c  d  e  f  g  h _\n");
         System.out.println(printBoard);
     }
 
@@ -260,11 +270,12 @@ public class Client {
             for (int j = 0; j < BOARD_SIZE; j++){
 
                 setBGColor(printBoard, i, j);
-                printBoard.append(getCharacter(squares[7 - i][j]));
+                printBoard.append(getCharacter(squares[7 - i][7 - j]));
             }
-            printBoard.append(RESET_BG_COLOR + "\n");
+            printBoard.append(RESET_BG_COLOR + SET_TEXT_COLOR_LIGHT_GREY + (i + 1) + "\n");
         }
 
+        printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ h  g  f  e  d  c  b  a _\n");
         System.out.println(printBoard);
     }
 

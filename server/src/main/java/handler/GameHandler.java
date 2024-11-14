@@ -21,7 +21,7 @@ public class GameHandler {
         response.status(e.getErrorNum());
         Gson gson = new Gson();
         HashMap<String, String> excMap = new HashMap<String, String>();
-        excMap.put("message", e.toString());
+        excMap.put("message", e.getMessage());
         return gson.toJson(excMap);
     }
 
