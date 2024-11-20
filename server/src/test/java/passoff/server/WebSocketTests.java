@@ -2,6 +2,7 @@ package passoff.server;
 
 import chess.*;
 import org.junit.jupiter.api.*;
+// import org.junit.jupiter.api.TestFactory;
 import passoff.model.*;
 import passoff.websocket.*;
 import server.Server;
@@ -382,7 +383,7 @@ public class WebSocketTests {
             }
         } catch(AssertionError e) {
             Assertions.fail("Expected message types matching %s for %s, got %s"
-                    .formatted(Arrays.toString(expectedTypes), username, messages.reversed()), e);
+                    .formatted(Arrays.toString(expectedTypes), username, messages), e);
         }
     }
 
