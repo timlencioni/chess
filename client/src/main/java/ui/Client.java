@@ -261,6 +261,8 @@ public class Client {
         }
     }
 
+    // ---------------- GAMEPLAY METHODS -------------------
+
     // ------------------- MISC. METHODS -------------------
     private void drawBoardWhite(ChessBoard board) {
         StringBuilder printBoard = new StringBuilder();
