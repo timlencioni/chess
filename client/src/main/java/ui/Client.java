@@ -14,6 +14,7 @@ public class Client {
 
     private static ServerFacade server;
     private boolean loggedIn;
+    private boolean inGame;
     private String authToken;
     private static final String SETUP = SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK;
     private static final String SETUP_ERROR = SET_TEXT_COLOR_RED + SET_BG_COLOR_BLACK;
@@ -24,6 +25,7 @@ public class Client {
     public Client(int port){
         server = new ServerFacade(port);
         loggedIn = false;
+        inGame = false;
         //authTokens = new ArrayList<>();
         authToken = null;
     }
@@ -36,7 +38,7 @@ public class Client {
                     "- to play on existing account");
 
         }
-        else {
+        else if (!inGame){
             System.out.println(SETUP + "logout " + SET_TEXT_COLOR_LIGHT_GREY +
                     "- to end session");
             System.out.println(SETUP + "create <NAME> " + SET_TEXT_COLOR_LIGHT_GREY +
@@ -48,6 +50,18 @@ public class Client {
             System.out.println(SETUP + "observe <ID> " + SET_TEXT_COLOR_LIGHT_GREY +
                     "- a game a non-player");
 
+        }
+        else {
+            System.out.println(SETUP + "redraw " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "- to redraw chess board");
+            System.out.println(SETUP + "leave " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "- the game you are in");
+            System.out.println(SETUP + "move <MOVE> " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "- a piece");
+            System.out.println(SETUP + "resign " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "- surrender and lose");
+            System.out.println(SETUP + "highlight <POSITION> " + SET_TEXT_COLOR_LIGHT_GREY +
+                    "- all possible moves for the piece on the given position");
         }
         System.out.println(SETUP + "quit " + SET_TEXT_COLOR_LIGHT_GREY +
                 "- to stop playing");
@@ -62,18 +76,29 @@ public class Client {
             if (!loggedIn) {
                 return switch (cmd) {
                     case "register" -> register(params);
-                    case "quit" -> "quit";
+                    case "quit", "q" -> "quit";
                     case "login" -> login(params);
                     default -> help();
                 };
             }
-            else {
+            else if (!inGame) {
                 return switch (cmd) {
                     case "logout" -> logout(params);
                     case "create" -> createGame(params);
                     case "list" -> listGames(params);
                     case "join" -> joinGame(params);
                     case "observe" -> observeGame(params);
+                    case "quit", "q" -> "quit";
+                    default -> help();
+                };
+            }
+            else {
+                return switch(cmd) {
+                    case "redraw" -> redraw(params);
+                    case "leave" -> leaveGame(params);
+                    case "move", "m" -> makeMove(params);
+                    case "resign" -> resign(params);
+                    case "highlight" -> highlightMoves(params);
                     case "quit", "q" -> "quit";
                     default -> help();
                 };
@@ -215,6 +240,8 @@ public class Client {
 
             if (color.equalsIgnoreCase("white")){ drawBoardWhite(new ChessBoard()); }
             else { drawBoardBlack(new ChessBoard()); }
+
+            inGame = true;
 
             return SETUP_SUCCESS + "Good Luck!";
         }
