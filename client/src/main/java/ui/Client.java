@@ -8,7 +8,6 @@ import java.util.Collection;
 import chess.*;
 import exception.ResponseException;
 import model.*;
-import server.NotificationHandler;
 import server.ServerFacade;
 
 public class Client {
@@ -96,10 +95,10 @@ public class Client {
             else {
                 return switch(cmd) {
                     case "redraw" -> redraw(params);
-                    case "leave" -> leaveGame(params);
-                    case "move", "m" -> makeMove(params);
-                    case "resign" -> resign(params);
-                    case "highlight" -> highlightMoves(params);
+                    // case "leave" -> leaveGame(params);
+                    // case "move", "m" -> makeMove(params);
+                    // case "resign" -> resign(params);
+                    // case "highlight" -> highlightMoves(params);
                     case "quit", "q" -> "quit";
                     default -> help();
                 };
@@ -267,7 +266,8 @@ public class Client {
         if (params.length != 0) {
             return SETUP_ERROR + "No arguments needed!";
         }
-
+        drawBoardWhite(new ChessBoard());
+        return "Not implemented!";
     }
 
     // ------------------- MISC. METHODS -------------------

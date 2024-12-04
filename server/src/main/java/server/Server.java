@@ -34,6 +34,7 @@ public class Server {
         clearHandler = new ClearHandler(clearService);
         gameService = new GameService(gameDAO, authDAO);
         gameHandler = new GameHandler(gameService);
+        // WebSocketHandler wsHandler = new WebSocketHandler();
 
         Spark.port(desiredPort);
 

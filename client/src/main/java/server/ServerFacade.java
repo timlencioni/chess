@@ -7,7 +7,6 @@ import model.*;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.commands.UserGameCommand;
-import websocket.messages.NotificationMessage;
 
 import java.io.*;
 import java.net.*;
@@ -24,14 +23,9 @@ public class ServerFacade {
         this.port = port;
         try {
             String url = "http://localhost:" + Integer.toString(port);
-            this.ws = new WebSocketMessenger(url, new NotificationHandler() {
-                @Override
-                public void notify(NotificationMessage notification) {
-                    System.out.println(SET_TEXT_COLOR_RED + notification.getNotification());
-                }
-            });
+            this.ws = new WebSocketMessenger(url);
         } catch (ResponseException e) {
-            System.out.println(e.getMessage());
+            System.out.println(SET_TEXT_COLOR_RED + "Failed to make connection with Server.");
         }
 
 
