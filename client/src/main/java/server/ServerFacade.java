@@ -1,10 +1,13 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.JsonObject;
 import model.*;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
 
 import java.io.*;
 import java.net.*;
@@ -14,10 +17,23 @@ import static ui.EscapeSequences.*;
 public class ServerFacade {
 
     private final int port;
+    private WebSocketMessenger ws;
 
     public ServerFacade(int port) {
 
         this.port = port;
+        try {
+            String url = "http://localhost:" + Integer.toString(port);
+            this.ws = new WebSocketMessenger(url, new NotificationHandler() {
+                @Override
+                public void notify(NotificationMessage notification) {
+                    System.out.println(SET_TEXT_COLOR_RED + notification.getNotification());
+                }
+            });
+        } catch (ResponseException e) {
+            System.out.println(e.getMessage());
+        }
+
 
     }
 
@@ -48,7 +64,9 @@ public class ServerFacade {
 
     public JoinGameData joinGame(JoinGameData joinGameData, String authToken) throws ResponseException {
         var path = "/game";
-        return makeRequest("PUT", path, joinGameData, JoinGameData.class, authToken);
+        JoinGameData joinData = makeRequest("PUT", path, joinGameData, JoinGameData.class, authToken);
+        wsJoinGame(joinData.gameID(), joinData.playerColor(), authToken);
+        return joinData;
     }
 
     public ListData listGames(String authToken) throws ResponseException {
@@ -127,5 +145,11 @@ public class ServerFacade {
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
+    }
+
+    // wsJoin returns the game
+    public void wsJoinGame(int gameID, String color, String authToken) {
+        String message = new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
+        ws.session.getAsyncRemote().sendText(message);
     }
 }

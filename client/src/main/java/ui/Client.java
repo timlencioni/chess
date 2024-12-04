@@ -8,6 +8,7 @@ import java.util.Collection;
 import chess.*;
 import exception.ResponseException;
 import model.*;
+import server.NotificationHandler;
 import server.ServerFacade;
 
 public class Client {
@@ -262,6 +263,12 @@ public class Client {
     }
 
     // ---------------- GAMEPLAY METHODS -------------------
+    private String redraw(String[] params){
+        if (params.length != 0) {
+            return SETUP_ERROR + "No arguments needed!";
+        }
+
+    }
 
     // ------------------- MISC. METHODS -------------------
     private void drawBoardWhite(ChessBoard board) {

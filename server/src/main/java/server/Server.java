@@ -4,28 +4,42 @@ import dataaccess.*;
 import service.*;
 import spark.*;
 import handler.*;
+import websocket.WebSocketHandler;
 
 public class Server {
+
+    public static AuthDAO authDAO;
+    public static GameDAO gameDAO;
+    public static UserDAO userDAO;
+
+    public static UserService userService;
+    public static UserHandler userHandler;
+    public static ClearService clearService;
+    public static ClearHandler clearHandler;
+    public static GameService gameService;
+    public static GameHandler gameHandler;
 
     public int run(int desiredPort) {
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
             throw new RuntimeException(ex);
         }
 
-        AuthDAO authDAO = new SqlAuthDAO();
-        GameDAO gameDAO = new SqlGameDAO();
-        UserDAO userDAO = new SqlUserDAO();
+        authDAO = new SqlAuthDAO();
+        gameDAO = new SqlGameDAO();
+        userDAO = new SqlUserDAO();
 
-        UserService userService = new UserService(authDAO, userDAO);
-        UserHandler userHandler = new UserHandler(userService);
-        ClearService clearService = new ClearService(authDAO, gameDAO, userDAO);
-        ClearHandler clearHandler = new ClearHandler(clearService);
-        GameService gameService = new GameService(gameDAO, authDAO);
-        GameHandler gameHandler = new GameHandler(gameService);
+        userService = new UserService(authDAO, userDAO);
+        userHandler = new UserHandler(userService);
+        clearService = new ClearService(authDAO, gameDAO, userDAO);
+        clearHandler = new ClearHandler(clearService);
+        gameService = new GameService(gameDAO, authDAO);
+        gameHandler = new GameHandler(gameService);
 
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", WebSocketHandler.class);
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", userHandler::register);
