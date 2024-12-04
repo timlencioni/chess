@@ -25,8 +25,9 @@ public class MemGameDAO implements GameDAO{
     }
 
     @Override
-    public void createGame(GameData gameData) {
+    public int createGame(GameData gameData) {
         gamesMemDB.put(gameData.gameID(), gameData);
+        return gameData.gameID();
     }
 
     @Override

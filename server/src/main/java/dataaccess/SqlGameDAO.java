@@ -6,17 +6,20 @@ import model.JoinGameData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import com.google.gson.Gson;
+
+import javax.xml.transform.Result;
 
 public class SqlGameDAO implements GameDAO{
 
     public SqlGameDAO() {
         var statement = """            
                     CREATE TABLE if NOT EXISTS GameTable (
-                                    gameID INT NOT NULL,
+                                    gameID INT NOT NULL AUTO_INCREMENT,
                                     whiteUsername VARCHAR(255),
                                     blackUsername VARCHAR(255),
                                     gameName VARCHAR(255) NOT NULL,
@@ -78,11 +81,11 @@ public class SqlGameDAO implements GameDAO{
     }
 
     @Override
-    public void createGame(GameData gameData) {
+    public int createGame(GameData gameData) {
         String statement = """
                             INSERT INTO GameTable (
-                            gameID, whiteUsername, blackUsername, gameName, chessGame
-                            ) VALUES(?, ?, ?, ?, ?)
+                            whiteUsername, blackUsername, gameName, chessGame
+                            ) VALUES(?, ?, ?, ?)
                             """;
 
         try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
@@ -90,13 +93,19 @@ public class SqlGameDAO implements GameDAO{
         }
         try (var connection = DatabaseManager.getConnection()) {
 
-            try (var prepareStatement = connection.prepareStatement(statement)) {
-                prepareStatement.setInt(1, gameData.gameID());
-                prepareStatement.setString(2, gameData.whiteUsername());
-                prepareStatement.setString(3, gameData.blackUsername());
-                prepareStatement.setString(4, gameData.gameName());
-                prepareStatement.setString(5, serializeChessGame(gameData.game()));
+            try (var prepareStatement = connection.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+                // prepareStatement.setInt(1, gameData.gameID());
+                prepareStatement.setString(1, gameData.whiteUsername());
+                prepareStatement.setString(2, gameData.blackUsername());
+                prepareStatement.setString(3, gameData.gameName());
+                prepareStatement.setString(4, serializeChessGame(gameData.game()));
                 prepareStatement.executeUpdate();
+
+                try (ResultSet rs = prepareStatement.getGeneratedKeys()) {
+                    rs.next();
+                    return rs.getInt(1);
+                }
+
 
             }
         } catch (SQLException | DataAccessException e) {

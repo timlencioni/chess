@@ -11,7 +11,7 @@ public interface GameDAO {
 
     void deleteAll();
 
-    void createGame(GameData gameData);
+    int createGame(GameData gameData);
 
     void addPlayer(JoinGameData joinGameData, String userName);
 
