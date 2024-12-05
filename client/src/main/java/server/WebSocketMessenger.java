@@ -69,7 +69,7 @@ public class WebSocketMessenger extends Endpoint {
     }
 
     private void handleNotification(ServerMessage message) {
-        String msg = ((NotificationMessage) message).getNotification();
+        String msg = ((NotificationMessage) message).getMessage();
         System.out.print(ERASE_LINE + '\r');
         System.out.printf("\n%s\n%s%s", msg, SET_TEXT_COLOR_WHITE, ">>> ");
     }

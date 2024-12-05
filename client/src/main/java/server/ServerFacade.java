@@ -154,6 +154,11 @@ public class ServerFacade {
         ws.session.getAsyncRemote().sendText(message);
     }
 
+    public void resign(int gameID, String authToken) {
+        String message = new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameID));
+        ws.session.getAsyncRemote().sendText(message);
+    }
+
     public void setCurrGame(ChessGame game) { currGame = game; }
 
     public ChessGame getCurrGame() { return currGame; }

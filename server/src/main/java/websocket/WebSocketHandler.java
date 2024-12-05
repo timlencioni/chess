@@ -9,6 +9,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Server;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadMessage;
 import websocket.messages.NotificationMessage;
 
@@ -30,9 +31,22 @@ public class WebSocketHandler {
         UserGameCommand cmd = new Gson().fromJson(message, UserGameCommand.class);
         AuthData auth = Server.authDAO.getAuth(cmd.getAuthToken());
         GameData game = Server.gameDAO.getGame(cmd.getGameID());
-        switch (cmd.getCommandType()) {
-            case CONNECT -> connectUser(session, auth, game);
-            case LEAVE -> leave(session, auth, game);
+        if (game == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Invalid gameID");
+            String errorJson = new Gson().toJson(errorMessage);
+            session.getRemote().sendString(errorJson);
+        }
+        else if (auth == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Invalid authToken");
+            String errorJson = new Gson().toJson(errorMessage);
+            session.getRemote().sendString(errorJson);
+        }
+        else {
+            switch (cmd.getCommandType()) {
+                case CONNECT -> connectUser(session, auth, game);
+                case LEAVE -> leave(session, auth, game);
+                case RESIGN -> resign(session, auth, game);
+            }
         }
     }
 
@@ -40,13 +54,13 @@ public class WebSocketHandler {
         connections.addSession(game.gameID(), session);
 
         LoadMessage loadMessage = new LoadMessage(game.game());
-        String jsonMsg = new Gson().toJson(loadMessage);
-        session.getRemote().sendString(jsonMsg);
+        String loadJson = new Gson().toJson(loadMessage);
+        session.getRemote().sendString(loadJson); // FIXME Error on Normal Connect test
 
         String notification = String.format("%s is now %s", auth.username(), getPosition(auth, game));
         NotificationMessage notificationMessage = new NotificationMessage(notification);
-        jsonMsg = new Gson().toJson(notificationMessage);
-        connections.broadcast(session, jsonMsg);
+        String notifyJson = new Gson().toJson(notificationMessage);
+        connections.broadcast(session, notifyJson);
 
     }
 
@@ -67,4 +81,7 @@ public class WebSocketHandler {
         connections.broadcast(session, jsonMsg);
     }
 
+    private void resign(Session session, AuthData auth, GameData game) throws IOException {
+
+    }
 }

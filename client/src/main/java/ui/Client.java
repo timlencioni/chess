@@ -4,6 +4,7 @@ import static ui.EscapeSequences.*;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Scanner;
 
 import chess.*;
 import exception.ResponseException;
@@ -102,7 +103,7 @@ public class Client {
                     case "redraw" -> redraw(params);
                     case "leave" -> leave(params);
                     // case "move", "m" -> makeMove(params);
-                    // case "resign" -> resign(params);
+                    case "resign" -> resign(params);
                     // case "highlight" -> highlightMoves(params);
                     case "quit", "q" -> "quit";
                     default -> help();
@@ -291,6 +292,29 @@ public class Client {
 
         inGame = false;
         return SETUP_SUCCESS + "Goodbye";
+    }
+
+    private String resign(String[] params) {
+        if (params.length != 0) {
+            return SETUP_ERROR + "No arguments needed!";
+        }
+        boolean verify = false;
+        while (!verify) {
+            System.out.println(SETUP_ERROR + "Are you sure you want to quit? ");
+            System.out.print(SET_TEXT_COLOR_WHITE + ">>> ");
+            Scanner scanner = new Scanner(System.in);
+            String line = scanner.nextLine();
+            if (line.equalsIgnoreCase("yes")) {
+                server.resign(currGameID, authToken);
+                verify = true;
+            } else if (line.equalsIgnoreCase("no")) {
+                verify = true;
+                return "";
+            }
+        }
+
+        inGame = false; // Do we want this?
+        return SETUP_SUCCESS + "You Resigned.";
     }
 
     // ------------------- MISC. METHODS -------------------
