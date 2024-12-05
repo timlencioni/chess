@@ -3,12 +3,12 @@ package websocket.messages;
 import chess.ChessGame;
 
 public class LoadMessage extends ServerMessage{
-    private ChessGame gameToLoad;
+    private ChessGame game;
 
     public LoadMessage(ChessGame game) {
         super(ServerMessageType.LOAD_GAME);
-        gameToLoad = game;
+        this.game = game;
     }
 
-    public ChessGame getGameToLoad() { return gameToLoad; }
+    public ChessGame getGame() { return game; }
 }

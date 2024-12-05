@@ -17,6 +17,7 @@ public class ServerFacade {
 
     private final int port;
     private WebSocketMessenger ws;
+    private ChessGame currGame;
 
     public ServerFacade(int port) {
 
@@ -24,11 +25,12 @@ public class ServerFacade {
         try {
             String url = "http://localhost:" + Integer.toString(port);
             this.ws = new WebSocketMessenger(url);
+            this.ws.setServer(this);
         } catch (ResponseException e) {
             System.out.println(SET_TEXT_COLOR_RED + "Failed to make connection with Server.");
         }
 
-
+        currGame = null;
     }
 
     public AuthData register(UserData userData) throws ResponseException{
@@ -151,4 +153,8 @@ public class ServerFacade {
         String message = new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID));
         ws.session.getAsyncRemote().sendText(message);
     }
+
+    public void setCurrGame(ChessGame game) { currGame = game; }
+
+    public ChessGame getCurrGame() { return currGame; }
 }

@@ -9,6 +9,7 @@ import chess.*;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
+import server.WebSocketMessenger;
 
 public class Client {
 
@@ -16,6 +17,7 @@ public class Client {
     private boolean loggedIn;
     private boolean inGame;
     private String authToken;
+    private String username;
     private int currGameID;
     private static final String SETUP = SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK;
     private static final String SETUP_ERROR = SET_TEXT_COLOR_RED + SET_BG_COLOR_BLACK;
@@ -30,6 +32,7 @@ public class Client {
         //authTokens = new ArrayList<>();
         authToken = null;
         currGameID = -1;
+        username = null;
     }
 
     public String help() {
@@ -106,7 +109,7 @@ public class Client {
                 };
             }
         } catch (ResponseException e) {
-            return e.getMessage();
+            return SETUP_ERROR + e.getMessage();
         }
     }
 
@@ -120,6 +123,7 @@ public class Client {
             try {
                 AuthData authData = server.register(new UserData(params[0], params[1], params[2]));
                 authToken = authData.authToken();
+                username = authData.username();
             }
             catch (ResponseException e) {
                 return e.getMessage();
@@ -258,7 +262,7 @@ public class Client {
             int id = Integer.parseInt(params[0]);
             // need to use id to get the correct game to observe
 
-            drawBoardWhite(new ChessBoard()); // FIXME: Get correct game to observe
+            drawBoardWhite(server.getCurrGame().getBoard()); // FIXME: Get correct game to observe
 
             return SETUP_SUCCESS + "Have fun!";
         }
@@ -269,7 +273,12 @@ public class Client {
         if (params.length != 0) {
             return SETUP_ERROR + "No arguments needed!";
         }
-        drawBoardWhite(new ChessBoard());
+
+        // get ChessGame
+        ChessGame game = server.getCurrGame();
+
+        // FIXME: How to get the Game's white/black username?
+        drawBoardWhite(game.getBoard());
         return "Not implemented!";
     }
 
@@ -285,6 +294,8 @@ public class Client {
     }
 
     // ------------------- MISC. METHODS -------------------
+
+
     private void drawBoardWhite(ChessBoard board) {
         StringBuilder printBoard = new StringBuilder();
         board.resetBoard();
