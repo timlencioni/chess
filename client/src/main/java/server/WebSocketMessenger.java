@@ -38,9 +38,9 @@ public class WebSocketMessenger extends Endpoint {
     }
 
     private void handleNotification(NotificationMessage notification) {
-        String msg = notification.getNotification();
+        String msg = notification.getNotification(); // FIXME:: Sending null message upon joining
         System.out.print(ERASE_LINE + '\r');
-        System.out.printf("\n%s\n[IN-GAME] >>> ", msg);
+        System.out.printf("\n%s\n", msg); //FIXME:: May need to be fixed based on how it looks in UI
     }
 
     @Override

@@ -16,6 +16,7 @@ public class Client {
     private boolean loggedIn;
     private boolean inGame;
     private String authToken;
+    private int currGameID;
     private static final String SETUP = SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK;
     private static final String SETUP_ERROR = SET_TEXT_COLOR_RED + SET_BG_COLOR_BLACK;
     private static final String SETUP_SUCCESS = SET_TEXT_COLOR_GREEN + SET_BG_COLOR_BLACK;
@@ -28,6 +29,7 @@ public class Client {
         inGame = false;
         //authTokens = new ArrayList<>();
         authToken = null;
+        currGameID = -1;
     }
 
     public String help() {
@@ -242,6 +244,7 @@ public class Client {
             else { drawBoardBlack(new ChessBoard()); }
 
             inGame = true;
+            currGameID = id;
 
             return SETUP_SUCCESS + "Good Luck!";
         }
@@ -255,7 +258,7 @@ public class Client {
             int id = Integer.parseInt(params[0]);
             // need to use id to get the correct game to observe
 
-            drawBoardWhite(new ChessBoard());
+            drawBoardWhite(new ChessBoard()); // FIXME: Get correct game to observe
 
             return SETUP_SUCCESS + "Have fun!";
         }
@@ -275,8 +278,10 @@ public class Client {
             return SETUP_ERROR + "No arguments needed!";
         }
 
+        server.leaveGame(authToken, currGameID);
+
         inGame = false;
-        return "Not implemented!";
+        return SETUP_SUCCESS + "Goodbye";
     }
 
     // ------------------- MISC. METHODS -------------------

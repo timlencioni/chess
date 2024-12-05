@@ -146,4 +146,9 @@ public class ServerFacade {
         String message = new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
         ws.session.getAsyncRemote().sendText(message);
     }
+
+    public void leaveGame(String authToken, int gameID) {
+        String message = new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.LEAVE, authToken, gameID));
+        ws.session.getAsyncRemote().sendText(message);
+    }
 }
