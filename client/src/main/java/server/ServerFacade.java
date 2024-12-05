@@ -59,7 +59,7 @@ public class ServerFacade {
     public JoinGameData joinGame(JoinGameData joinGameData, String authToken) throws ResponseException {
         var path = "/game";
         JoinGameData joinData = makeRequest("PUT", path, joinGameData, JoinGameData.class, authToken);
-        wsJoinGame(joinData.gameID(), joinData.playerColor(), authToken);
+        wsJoinGame(joinGameData.gameID(), joinGameData.playerColor(), authToken);
         return joinData;
     }
 

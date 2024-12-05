@@ -164,6 +164,46 @@ public class SqlGameDAO implements GameDAO{
         }
     }
 
+    public void removePlayer(int gameID, String colorToRemove) {
+        try { DatabaseManager.createDatabase(); } catch (DataAccessException ex) {
+            throw new RuntimeException(ex);
+        }
+        String statement = null;
+        if (colorToRemove.equalsIgnoreCase("WHITE")){
+            try (var connection = DatabaseManager.getConnection()) {
+                statement = """
+                        UPDATE GameTable
+                        SET whiteUsername=?
+                        WHERE gameID=?
+                        """;
+                try (var prepareStatement = connection.prepareStatement(statement)) {
+                    prepareStatement.setString(1, "NULL");
+                    prepareStatement.setInt(2, gameID);
+                    prepareStatement.executeUpdate();
+                }
+            } catch (SQLException | DataAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        else {
+            try (var connection = DatabaseManager.getConnection()) {
+                statement = """
+                        UPDATE GameTable
+                        SET blackUsername=?
+                        WHERE gameID=?
+                        """;
+                try (var prepareStatement = connection.prepareStatement(statement)) {
+                    prepareStatement.setString(1, "NULL");
+                    prepareStatement.setInt(2, gameID);
+                    prepareStatement.executeUpdate();
+                }
+            } catch (SQLException | DataAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     @Override
     public GameData getGame(int gameID) {
         String statement = "SELECT * FROM GameTable WHERE gameID=?";

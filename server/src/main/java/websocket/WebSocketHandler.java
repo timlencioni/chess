@@ -1,11 +1,10 @@
 package websocket;
 
 import com.google.gson.Gson;
+import dataaccess.*;
 import model.GameData;
-import model.UserData;
 import model.AuthData;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Server;
@@ -20,6 +19,11 @@ import java.io.IOException;
 public class WebSocketHandler {
 
     private final SessionManager connections = new SessionManager();
+    private SqlGameDAO gameDAO;
+
+    public void setDAO(SqlGameDAO gameDAO) {
+        this.gameDAO = gameDAO;
+    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
@@ -28,7 +32,7 @@ public class WebSocketHandler {
         GameData game = Server.gameDAO.getGame(cmd.getGameID());
         switch (cmd.getCommandType()) {
             case CONNECT -> connectUser(session, auth, game);
-            case LEAVE -> doNothingForNow();
+            case LEAVE -> leave(session, auth, game);
         }
     }
 
@@ -52,6 +56,11 @@ public class WebSocketHandler {
         else { return "observing."; }
     }
 
-    private void doNothingForNow() {}
+    private void leave(Session session, AuthData auth, GameData game) {
+        if (auth.username().equals(game.whiteUsername())) { gameDAO.removePlayer(game.gameID(), "WHITE"); }
+        else { gameDAO.removePlayer(game.gameID(), "BLACK"); }
+
+        connections.removeSession(game.gameID(), session);
+    }
 
 }

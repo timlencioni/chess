@@ -95,7 +95,7 @@ public class Client {
             else {
                 return switch(cmd) {
                     case "redraw" -> redraw(params);
-                    // case "leave" -> leaveGame(params);
+                    case "leave" -> leave(params);
                     // case "move", "m" -> makeMove(params);
                     // case "resign" -> resign(params);
                     // case "highlight" -> highlightMoves(params);
@@ -197,7 +197,7 @@ public class Client {
                 return SETUP_ERROR + e.getMessage();
             }
             // Collection<String> games = new ArrayList<>();
-            int listNum = 0;
+            int listNum = 101;
             System.out.println(SETUP + "Active Games:");
             System.out.println(SETUP + SET_TEXT_UNDERLINE + "id \tName \tWhite \tBlack" + RESET_TEXT_UNDERLINE);
             for (ListGameData game : list) {
@@ -221,7 +221,7 @@ public class Client {
         else {
             int id;
             try {
-                id = Integer.parseInt(params[0]) + 1;
+                id = Integer.parseInt(params[0]) - 100;
             }
             catch (Exception e) {
                 return SETUP_ERROR + "Provide game's list id number!";
@@ -267,6 +267,15 @@ public class Client {
             return SETUP_ERROR + "No arguments needed!";
         }
         drawBoardWhite(new ChessBoard());
+        return "Not implemented!";
+    }
+
+    private String leave(String[] params) {
+        if (params.length != 0) {
+            return SETUP_ERROR + "No arguments needed!";
+        }
+
+        inGame = false;
         return "Not implemented!";
     }
 

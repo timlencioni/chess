@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.messages.NotificationMessage;
+import static ui.EscapeSequences.*;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -38,6 +39,8 @@ public class WebSocketMessenger extends Endpoint {
 
     private void handleNotification(NotificationMessage notification) {
         String msg = notification.getNotification();
+        System.out.print(ERASE_LINE + '\r');
+        System.out.printf("\n%s\n[IN-GAME] >>> ", msg);
     }
 
     @Override

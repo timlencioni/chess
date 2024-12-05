@@ -31,8 +31,8 @@ public class GameService {
                     null,null,
                     gameName, new ChessGame());
             int gameID = gameDAO.createGame(gameData);
-            newGameID++;
-            return newGameID;
+            // newGameID = gameID;
+            return gameID;
         }
         else {
             throw new GameException("Error: Unauthorized", 401);
