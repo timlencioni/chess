@@ -8,12 +8,12 @@ All others will be able to use the UserGameCommand straight from the supplied cl
  */
 
 public class MakeMoveCommand extends UserGameCommand{
-    private ChessMove moveToMake;
+    private ChessMove move;
 
     public MakeMoveCommand(String authToken, Integer gameID, ChessMove move) {
         super(CommandType.MAKE_MOVE, authToken, gameID);
-        moveToMake = move;
+        this.move = move;
     }
 
-    public ChessMove getMoveToMake() { return moveToMake; }
+    public ChessMove getMove() { return move; }
 }
