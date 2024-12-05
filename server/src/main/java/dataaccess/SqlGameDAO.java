@@ -259,4 +259,24 @@ public class SqlGameDAO implements GameDAO{
         return toReturn;
     }
 
+    public void updateGame(GameData game) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var statement = conn.prepareStatement("""
+                            UPDATE GameTable 
+                            SET whiteUsername=?, blackUsername=?, gameName=?, chessGame=? 
+                            WHERE gameID=?
+                            """)) {
+                statement.setString(1, game.whiteUsername());
+                statement.setString(2, game.blackUsername());
+                statement.setString(3, game.gameName());
+                statement.setString(4, new Gson().toJson(game.game()));
+                statement.setInt(5, game.gameID());
+                int rowsUpdated = statement.executeUpdate();
+                if (rowsUpdated == 0) throw new DataAccessException("Item requested to be updated not found");
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
 }
