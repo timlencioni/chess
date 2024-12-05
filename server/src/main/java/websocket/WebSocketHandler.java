@@ -46,7 +46,7 @@ public class WebSocketHandler {
         String notification = String.format("%s is now %s", auth.username(), getPosition(auth, game));
         NotificationMessage notificationMessage = new NotificationMessage(notification);
         jsonMsg = new Gson().toJson(notificationMessage);
-        connections.broadcast(session, jsonMsg); //FIXME:: Not working...
+        connections.broadcast(session, jsonMsg);
 
     }
 
@@ -56,11 +56,15 @@ public class WebSocketHandler {
         else { return "observing."; }
     }
 
-    private void leave(Session session, AuthData auth, GameData game) {
+    private void leave(Session session, AuthData auth, GameData game) throws IOException {
         if (auth.username().equals(game.whiteUsername())) { gameDAO.removePlayer(game.gameID(), "WHITE"); }
         else { gameDAO.removePlayer(game.gameID(), "BLACK"); }
 
         connections.removeSession(game.gameID(), session);
+        String notification = String.format("%s left the game", auth.username());
+        NotificationMessage notificationMessage = new NotificationMessage(notification);
+        String jsonMsg = new Gson().toJson(notificationMessage);
+        connections.broadcast(session, jsonMsg);
     }
 
 }

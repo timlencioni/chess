@@ -3,6 +3,7 @@ package server;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -33,7 +34,16 @@ public class WebSocketMessenger extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
+                    ServerMessage notification;
+                    if (message.contains("LOAD_GAME")) {
+                        notification = new Gson().fromJson(message, LoadMessage.class);
+                    }
+                    else if (message.contains("NOTIFICATION")) {
+                        notification = new Gson().fromJson(message, NotificationMessage.class);
+                    }
+                    else {
+                        notification = new Gson().fromJson(message, ErrorMessage.class);
+                    }
                     handleMessage(notification);
                 }
             });
@@ -59,9 +69,9 @@ public class WebSocketMessenger extends Endpoint {
     }
 
     private void handleNotification(ServerMessage message) {
-        String msg = ((NotificationMessage) message).getNotification(); // FIXME: Throwing and ignoring error...
+        String msg = ((NotificationMessage) message).getNotification();
         System.out.print(ERASE_LINE + '\r');
-        System.out.printf("\n%s\n", msg);
+        System.out.printf("\n%s\n%s%s", msg, SET_TEXT_COLOR_WHITE, ">>> ");
     }
 
     private void handleError(ServerMessage serverMessage) {
