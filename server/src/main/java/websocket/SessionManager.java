@@ -36,12 +36,12 @@ public class SessionManager {
         for (var gameID : sessions.keySet()) {
             HashSet<Session> sessionSet = sessions.get(gameID);
             for (Session session : sessionSet)
-            if (session.isOpen() && !session.equals(excludedSession)) {
-                session.getRemote().sendString(message);
+                if (session.isOpen() && !session.equals(excludedSession)) {
+                    session.getRemote().sendString(message);
 
-            } else if (!session.isOpen()) {
-                removeList.add(gameID);
-            }
+                } else if (!session.isOpen()) {
+                    removeList.add(gameID);
+                }
         }
 
         // Clean up any connections that were left open.

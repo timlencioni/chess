@@ -59,7 +59,7 @@ public class WebSocketMessenger extends Endpoint {
     }
 
     private void handleNotification(ServerMessage message) {
-        String msg = ((NotificationMessage) message).getNotification();
+        String msg = ((NotificationMessage) message).getNotification(); // FIXME: Throwing and ignoring error...
         System.out.print(ERASE_LINE + '\r');
         System.out.printf("\n%s\n", msg);
     }

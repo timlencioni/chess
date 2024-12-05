@@ -46,7 +46,7 @@ public class WebSocketHandler {
         String notification = String.format("%s is now %s", auth.username(), getPosition(auth, game));
         NotificationMessage notificationMessage = new NotificationMessage(notification);
         jsonMsg = new Gson().toJson(notificationMessage);
-        connections.broadcast(session, jsonMsg);
+        connections.broadcast(session, jsonMsg); //FIXME:: Not working...
 
     }
 

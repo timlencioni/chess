@@ -34,13 +34,13 @@ public class Server {
         clearHandler = new ClearHandler(clearService);
         gameService = new GameService(gameDAO, authDAO);
         gameHandler = new GameHandler(gameService);
-        // WebSocketHandler wsHandler = new WebSocketHandler();
-
+        WebSocketHandler wsHandler = new WebSocketHandler();
+        wsHandler.setDAO((SqlGameDAO) gameDAO);
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
-        Spark.webSocket("/ws", WebSocketHandler.class);
+        Spark.webSocket("/ws", wsHandler);
 
         // Register your endpoints and handle exceptions here.
         Spark.post("/user", userHandler::register);

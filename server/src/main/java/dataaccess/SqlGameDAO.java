@@ -177,7 +177,7 @@ public class SqlGameDAO implements GameDAO{
                         WHERE gameID=?
                         """;
                 try (var prepareStatement = connection.prepareStatement(statement)) {
-                    prepareStatement.setString(1, "NULL");
+                    prepareStatement.setString(1, null);
                     prepareStatement.setInt(2, gameID);
                     prepareStatement.executeUpdate();
                 }
@@ -194,7 +194,7 @@ public class SqlGameDAO implements GameDAO{
                         WHERE gameID=?
                         """;
                 try (var prepareStatement = connection.prepareStatement(statement)) {
-                    prepareStatement.setString(1, "NULL");
+                    prepareStatement.setString(1, null);
                     prepareStatement.setInt(2, gameID);
                     prepareStatement.executeUpdate();
                 }
