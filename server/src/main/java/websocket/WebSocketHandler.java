@@ -1,6 +1,8 @@
 package websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.GameData;
@@ -9,6 +11,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import server.Server;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadMessage;
@@ -43,6 +46,7 @@ public class WebSocketHandler {
                 case CONNECT -> connectUser(session, auth, game);
                 case LEAVE -> leave(session, auth, game);
                 case RESIGN -> resign(session, auth, game);
+                case MAKE_MOVE -> makeMove(session, auth, game, (MakeMoveCommand) cmd);
             }
         }
     }
@@ -63,6 +67,12 @@ public class WebSocketHandler {
         LoadMessage loadMessage = new LoadMessage(game);
         String loadJson = new Gson().toJson(loadMessage);
         session.getRemote().sendString(loadJson);
+    }
+
+    private void broadcastLoad(ChessGame game) throws IOException{
+        LoadMessage loadMessage = new LoadMessage(game);
+        String loadJson = new Gson().toJson(loadMessage);
+        connections.broadcast(null, loadJson);
     }
 
     private void connectUser(Session session, AuthData auth, GameData game) throws IOException {
@@ -124,4 +134,62 @@ public class WebSocketHandler {
         else if (username.equals(game.whiteUsername())) { return ChessGame.TeamColor.WHITE; }
         else { return null; }
     }
+
+    private void makeMove(Session session, AuthData auth, GameData game, MakeMoveCommand command) throws IOException {
+        if (game.game().isGameOver()) {
+            sendError(session, "Game over, you cannot move.");
+            return;
+        }
+
+        ChessGame.TeamColor userColor = getTeamColor(auth.username(), game);
+        if (userColor == null) {
+            sendError(session, "You cannot move as an observer!");
+            return;
+        }
+
+        if (!userColor.equals(game.game().getTeamTurn())) {
+            sendError(session, "Not your turn yet!");
+            return;
+        }
+
+        String otherUsername = null;
+        if (userColor.equals(ChessGame.TeamColor.WHITE)) { otherUsername = game.blackUsername(); }
+        else if (userColor.equals(ChessGame.TeamColor.BLACK)) { otherUsername = game.whiteUsername(); }
+
+        ChessGame.TeamColor oppColor = null;
+        if (userColor.equals(ChessGame.TeamColor.WHITE)) { oppColor = ChessGame.TeamColor.BLACK; }
+        else if (userColor.equals(ChessGame.TeamColor.BLACK)) { oppColor = ChessGame.TeamColor.WHITE; }
+
+        ChessMove move = command.getMoveToMake();
+
+        try {
+            game.game().makeMove(move);
+        } catch (InvalidMoveException e) {
+            sendError(session, e.getMessage());
+        }
+
+        if (game.game().isInCheckmate(oppColor)) {
+            broadcastNotification(null, String.format("Checkmate! %s Wins!", auth.username()));
+            game.game().setGameOver(true);
+        }
+        else if (game.game().isInStalemate(oppColor)) {
+            broadcastNotification(null, "It's a Stalemate! No available moves.");
+            game.game().setGameOver(true);
+        }
+        else if (game.game().isInCheck(oppColor)) {
+            broadcastNotification(null, String.format("Check! %s's King is in Danger!", otherUsername));
+        }
+        else {
+            broadcastNotification(session, String.format("%s made move %s", auth.username(), move));
+        }
+
+        try {
+            gameDAO.updateGame(game);
+        } catch (DataAccessException e) {
+            sendError(session, "Could not execute move");
+        }
+
+        broadcastLoad(game.game());
+    }
+
 }
