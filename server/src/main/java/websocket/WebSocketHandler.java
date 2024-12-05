@@ -1,5 +1,6 @@
 package websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.GameData;
@@ -32,14 +33,10 @@ public class WebSocketHandler {
         AuthData auth = Server.authDAO.getAuth(cmd.getAuthToken());
         GameData game = Server.gameDAO.getGame(cmd.getGameID());
         if (game == null) {
-            ErrorMessage errorMessage = new ErrorMessage("Invalid gameID");
-            String errorJson = new Gson().toJson(errorMessage);
-            session.getRemote().sendString(errorJson);
+            sendError(session, "Invalid gameID");
         }
         else if (auth == null) {
-            ErrorMessage errorMessage = new ErrorMessage("Invalid authToken");
-            String errorJson = new Gson().toJson(errorMessage);
-            session.getRemote().sendString(errorJson);
+            sendError(session, "Invalid authToken");
         }
         else {
             switch (cmd.getCommandType()) {
@@ -50,17 +47,31 @@ public class WebSocketHandler {
         }
     }
 
-    private void connectUser(Session session, AuthData auth, GameData game) throws IOException {
-        connections.addSession(game.gameID(), session);
+    private void sendError(Session session, String msg) throws IOException {
+        ErrorMessage errorMessage = new ErrorMessage(msg);
+        String errorJson = new Gson().toJson(errorMessage);
+        session.getRemote().sendString(errorJson);
+    }
 
-        LoadMessage loadMessage = new LoadMessage(game.game());
-        String loadJson = new Gson().toJson(loadMessage);
-        session.getRemote().sendString(loadJson); // FIXME Error on Normal Connect test
-
-        String notification = String.format("%s is now %s", auth.username(), getPosition(auth, game));
+    private void broadcastNotification(Session session, String notification) throws IOException {
         NotificationMessage notificationMessage = new NotificationMessage(notification);
         String notifyJson = new Gson().toJson(notificationMessage);
         connections.broadcast(session, notifyJson);
+    }
+
+    private void sendLoad(Session session, ChessGame game) throws IOException {
+        LoadMessage loadMessage = new LoadMessage(game);
+        String loadJson = new Gson().toJson(loadMessage);
+        session.getRemote().sendString(loadJson);
+    }
+
+    private void connectUser(Session session, AuthData auth, GameData game) throws IOException {
+        connections.addSession(game.gameID(), session);
+
+        sendLoad(session, game.game());
+
+        String notification = String.format("%s is now %s", auth.username(), getPosition(auth, game));
+        broadcastNotification(session, notification);
 
     }
 
@@ -76,12 +87,41 @@ public class WebSocketHandler {
 
         connections.removeSession(game.gameID(), session);
         String notification = String.format("%s left the game", auth.username());
-        NotificationMessage notificationMessage = new NotificationMessage(notification);
-        String jsonMsg = new Gson().toJson(notificationMessage);
-        connections.broadcast(session, jsonMsg);
+        broadcastNotification(session, notification);
     }
 
     private void resign(Session session, AuthData auth, GameData game) throws IOException {
+        if (game.game().isGameOver()) {
+            sendError(session, "Game is already over.");
+            return;
+        }
 
+        ChessGame.TeamColor userColor = getTeamColor(auth.username(), game);
+        if (userColor == null) {
+            sendError(session, "You cannot resign if not playing...");
+            return;
+        }
+
+        String otherUsername = null;
+        if (userColor.equals(ChessGame.TeamColor.WHITE)) { otherUsername = game.blackUsername(); }
+        else if (userColor.equals(ChessGame.TeamColor.BLACK)) { otherUsername = game.whiteUsername(); }
+
+        try {
+            game.game().setGameOver(true);
+            gameDAO.updateGame(game);
+        }
+        catch (DataAccessException e) {
+            sendError(session, "Cannot update game server");
+        }
+
+        String notification = String.format("%s has resigned. %s has won!", auth.username(), otherUsername);
+        broadcastNotification(null, notification);
+
+    }
+
+    private ChessGame.TeamColor getTeamColor(String username, GameData game) {
+        if (username.equals(game.blackUsername())) { return ChessGame.TeamColor.BLACK; }
+        else if (username.equals(game.whiteUsername())) { return ChessGame.TeamColor.WHITE; }
+        else { return null; }
     }
 }
