@@ -19,6 +19,7 @@ public class Client {
     private boolean inGame;
     private String authToken;
     private String username;
+    private String playerColor;
     private int currGameID;
     private static final String SETUP = SET_TEXT_COLOR_WHITE + SET_BG_COLOR_BLACK;
     private static final String SETUP_ERROR = SET_TEXT_COLOR_RED + SET_BG_COLOR_BLACK;
@@ -34,6 +35,7 @@ public class Client {
         authToken = null;
         currGameID = -1;
         username = null;
+        playerColor = null;
     }
 
     public String help() {
@@ -245,11 +247,14 @@ public class Client {
                 return SETUP_ERROR + e.getMessage();
             }
 
-            if (color.equalsIgnoreCase("white")){ drawBoardWhite(new ChessBoard()); }
-            else { drawBoardBlack(new ChessBoard()); }
+            // server.getCurrBoard(id);
+
+            if (color.equalsIgnoreCase("white")){ drawBoardWhite(server.getCurrGame().getBoard()); }
+            else { drawBoardBlack(server.getCurrGame().getBoard()); }
 
             inGame = true;
             currGameID = id;
+            playerColor = color;
 
             return SETUP_SUCCESS + "Good Luck!";
         }
@@ -263,7 +268,9 @@ public class Client {
             int id = Integer.parseInt(params[0]);
             // need to use id to get the correct game to observe
 
-            drawBoardWhite(server.getCurrGame().getBoard()); // FIXME: Get correct game to observe
+            drawBoardWhite(server.getCurrGame().getBoard());
+
+            inGame = true;
 
             return SETUP_SUCCESS + "Have fun!";
         }
@@ -278,9 +285,9 @@ public class Client {
         // get ChessGame
         ChessGame game = server.getCurrGame();
 
-        // FIXME: How to get the Game's white/black username?
-        drawBoardWhite(game.getBoard());
-        return "Not implemented!";
+        if (playerColor.equalsIgnoreCase("black")) { drawBoardBlack(game.getBoard()); }
+        else { drawBoardWhite(game.getBoard()); }
+        return "";
     }
 
     private String leave(String[] params) {

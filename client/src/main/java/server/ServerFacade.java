@@ -143,7 +143,7 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-    // wsJoin returns the game
+    // wsJoin returns the game HOW???
     public void wsJoinGame(int gameID, String color, String authToken) {
         String message = new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
         ws.session.getAsyncRemote().sendText(message);
@@ -161,5 +161,9 @@ public class ServerFacade {
 
     public void setCurrGame(ChessGame game) { currGame = game; }
 
-    public ChessGame getCurrGame() { return currGame; }
+    public ChessGame getCurrGame() {
+
+
+        return currGame;
+    }
 }
