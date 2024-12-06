@@ -65,7 +65,7 @@ public class WebSocketMessenger extends Endpoint {
 
     private void handleLoad(ServerMessage serverMessage) {
         ChessGame game = ((LoadMessage) serverMessage).getGame();
-        server.setCurrGame(game); //FIXME: Is this working the way I think it is???
+        server.setCurrGame(game); // Is this working the way I think it is???
     }
 
     private void handleNotification(ServerMessage message) {
