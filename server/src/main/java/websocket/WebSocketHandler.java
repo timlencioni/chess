@@ -46,7 +46,7 @@ public class WebSocketHandler {
                 case CONNECT -> connectUser(session, auth, game);
                 case LEAVE -> leave(session, auth, game);
                 case RESIGN -> resign(session, auth, game);
-                case MAKE_MOVE -> makeMove(session, auth, game, (MakeMoveCommand) cmd);
+                case MAKE_MOVE -> makeMove(session, auth, game, message);
             }
         }
     }
@@ -135,7 +135,10 @@ public class WebSocketHandler {
         else { return null; }
     }
 
-    private void makeMove(Session session, AuthData auth, GameData game, MakeMoveCommand command) throws IOException {
+    private void makeMove(Session session, AuthData auth, GameData game, String message) throws IOException {
+        MakeMoveCommand command = new Gson().fromJson(message, MakeMoveCommand.class);
+        ChessMove move = command.getMove();
+
         if (game.game().isGameOver()) {
             sendError(session, "Game over, you cannot move.");
             return;
@@ -159,8 +162,6 @@ public class WebSocketHandler {
         ChessGame.TeamColor oppColor = null;
         if (userColor.equals(ChessGame.TeamColor.WHITE)) { oppColor = ChessGame.TeamColor.BLACK; }
         else if (userColor.equals(ChessGame.TeamColor.BLACK)) { oppColor = ChessGame.TeamColor.WHITE; }
-
-        ChessMove move = command.getMoveToMake();
 
         try {
             game.game().makeMove(move);
