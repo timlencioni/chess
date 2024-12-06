@@ -57,10 +57,10 @@ public class WebSocketHandler {
         session.getRemote().sendString(errorJson);
     }
 
-    private void broadcastNotification(Session session, String notification) throws IOException {
+    private void broadcastNotification(Session session, int gameID, String notification) throws IOException {
         NotificationMessage notificationMessage = new NotificationMessage(notification);
         String notifyJson = new Gson().toJson(notificationMessage);
-        connections.broadcast(session, notifyJson);
+        connections.broadcast(session, gameID, notifyJson);
     }
 
     private void sendLoad(Session session, ChessGame game) throws IOException {
@@ -69,10 +69,10 @@ public class WebSocketHandler {
         session.getRemote().sendString(loadJson);
     }
 
-    private void broadcastLoad(ChessGame game) throws IOException{
+    private void broadcastLoad(ChessGame game, int gameID) throws IOException{
         LoadMessage loadMessage = new LoadMessage(game);
         String loadJson = new Gson().toJson(loadMessage);
-        connections.broadcast(null, loadJson);
+        connections.broadcast(null, gameID, loadJson);
     }
 
     private void connectUser(Session session, AuthData auth, GameData game) throws IOException {
@@ -81,7 +81,7 @@ public class WebSocketHandler {
         sendLoad(session, game.game());
 
         String notification = String.format("%s is now %s", auth.username(), getPosition(auth, game));
-        broadcastNotification(session, notification);
+        broadcastNotification(session, game.gameID(), notification);
 
     }
 
@@ -97,7 +97,7 @@ public class WebSocketHandler {
 
         connections.removeSession(game.gameID(), session);
         String notification = String.format("%s left the game", auth.username());
-        broadcastNotification(session, notification);
+        broadcastNotification(session, game.gameID(), notification);
     }
 
     private void resign(Session session, AuthData auth, GameData game) throws IOException {
@@ -125,7 +125,7 @@ public class WebSocketHandler {
         }
 
         String notification = String.format("%s has resigned. %s has won!", auth.username(), otherUsername);
-        broadcastNotification(null, notification);
+        broadcastNotification(null, game.gameID(), notification);
 
     }
 
@@ -166,23 +166,23 @@ public class WebSocketHandler {
         try {
             game.game().makeMove(move);
         } catch (InvalidMoveException e) {
-            sendError(session, e.getMessage());
+            sendError(session, "Invalid Move!");
+            return;
         }
 
         if (game.game().isInCheckmate(oppColor)) {
-            broadcastNotification(null, String.format("Checkmate! %s Wins!", auth.username()));
+            broadcastNotification(null, game.gameID(), String.format("Checkmate! %s Wins!", auth.username()));
             game.game().setGameOver(true);
         }
         else if (game.game().isInStalemate(oppColor)) {
-            broadcastNotification(null, "It's a Stalemate! No available moves.");
+            broadcastNotification(null, game.gameID(), "It's a Stalemate! No available moves.");
             game.game().setGameOver(true);
         }
         else if (game.game().isInCheck(oppColor)) {
-            broadcastNotification(null, String.format("Check! %s's King is in Danger!", otherUsername));
+            broadcastNotification(null, game.gameID(), String.format("Check! %s's King is in Danger!", otherUsername));
         }
-        else {
-            broadcastNotification(session, String.format("%s made move %s", auth.username(), move));
-        }
+
+        broadcastNotification(session, game.gameID(), String.format("%s made move %s", auth.username(), move));
 
         try {
             gameDAO.updateGame(game);
@@ -190,7 +190,7 @@ public class WebSocketHandler {
             sendError(session, "Could not execute move");
         }
 
-        broadcastLoad(game.game());
+        broadcastLoad(game.game(), game.gameID());
     }
 
 }
