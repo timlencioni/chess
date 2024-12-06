@@ -1,12 +1,14 @@
 package server;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.JsonObject;
 import model.*;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
 import ui.Client;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.io.*;
@@ -168,13 +170,15 @@ public class ServerFacade {
         client.drawBoard(game);
     }
 
-    public ChessGame getCurrGame() {
-
-        return currGame;
-    }
+    public ChessGame getCurrGame() { return currGame; }
 
     public void observe(String authToken, int gameID) {
         String message = new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
+        ws.session.getAsyncRemote().sendText(message);
+    }
+
+    public void makeMove(ChessMove move, String authToken, int gameID) {
+        String message = new Gson().toJson(new MakeMoveCommand(authToken, gameID, move));
         ws.session.getAsyncRemote().sendText(message);
     }
 }

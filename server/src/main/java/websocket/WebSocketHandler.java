@@ -86,8 +86,10 @@ public class WebSocketHandler {
     }
 
     private Object getPosition(AuthData auth, GameData game) {
-        if (game.whiteUsername().equals(auth.username())) { return "playing white."; }
-        else if (game.blackUsername().equals(auth.username())) { return "playing black."; }
+        if (game.whiteUsername() != null &&
+                game.whiteUsername().equals(auth.username())) { return "playing white."; }
+        else if (game.blackUsername() != null &&
+                game.blackUsername().equals(auth.username())) { return "playing black."; }
         else { return "observing."; }
     }
 

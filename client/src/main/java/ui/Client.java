@@ -4,6 +4,7 @@ import static ui.EscapeSequences.*;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Scanner;
 
 import chess.*;
@@ -105,9 +106,9 @@ public class Client {
                 return switch(cmd) {
                     case "redraw" -> redraw(params);
                     case "leave" -> leave(params);
-                    // case "move", "m" -> makeMove(params);
+                    case "move", "m" -> makeMove(params);
                     case "resign" -> resign(params);
-                    // case "highlight" -> highlightMoves(params);
+                    case "highlight" -> highlightMoves(params);
                     case "quit", "q" -> "quit";
                     default -> help();
                 };
@@ -293,9 +294,41 @@ public class Client {
         }
 
         server.leaveGame(authToken, currGameID);
-
+        currGameID = -1;
         inGame = false;
         return SETUP_SUCCESS + "Goodbye";
+    }
+
+    private String makeMove(String[] params) {
+        if (playerColor == null) { return SETUP_ERROR + "Cannot move as observer."; }
+
+        if (params.length >= 2 && params[0].matches("[a-h][1-8]") && params[1].matches("[a-h][1-8]")) {
+            ChessPosition currPos = new ChessPosition(params[0].charAt(1) - '0', params[0].charAt(0) - ('a'-1));
+            ChessPosition nextPos = new ChessPosition(params[1].charAt(1) - '0', params[1].charAt(0) - ('a'-1));
+
+            ChessPiece.PieceType promotionType = null;
+            if (params.length == 3) {
+                switch (params[2].toLowerCase()) {
+                    case "queen" -> promotionType = ChessPiece.PieceType.QUEEN;
+                    case "rook" -> promotionType = ChessPiece.PieceType.ROOK;
+                    case "bishop" -> promotionType = ChessPiece.PieceType.BISHOP;
+                    case "knight" -> promotionType = ChessPiece.PieceType.KNIGHT;
+                    default -> promotionType = null;
+                }
+                if (promotionType == null) {
+                    return SETUP_ERROR + "Invalid Promotion Piece. Try again.";
+                }
+            }
+
+            ChessMove move = new ChessMove(currPos, nextPos, promotionType);
+            server.makeMove(move, authToken, currGameID);
+        }
+        else {
+            System.out.println(SETUP_ERROR + "Invalid Move Command. Should look something like: "
+                    + SETUP_SUCCESS + "e2 e4");
+        }
+
+        return "";
     }
 
     private String resign(String[] params) {
@@ -321,12 +354,36 @@ public class Client {
         return SETUP_SUCCESS + "You Resigned.";
     }
 
+    private String highlightMoves(String[] params) {
+        if (params.length != 1) {
+            return SETUP_ERROR + "Must provide <position>!";
+        }
+        if (!params[0].matches("[a-h][1-8]")) {
+            return SETUP_ERROR + "Invalid position format, must be <letter><number>";
+        }
+
+        ChessGame game = server.getCurrGame();
+        ChessPosition pos = new ChessPosition(params[0].charAt(1) - '0', params[0].charAt(0) - ('a'-1));
+        Collection<ChessMove> moves = game.validMoves(pos);
+
+        if (moves == null || moves.isEmpty()) { return SETUP_ERROR + String.format("No possible moves for %s", pos); }
+
+        if (playerColor != null && playerColor.equalsIgnoreCase("black")) {
+            drawHighlightBlack(moves, game, pos);
+        }
+        else {
+            drawHighlightWhite(moves, game, pos);
+        }
+
+
+        return "";
+
+    }
+
     // ------------------- MISC. METHODS -------------------
-
-
     private void drawBoardWhite(ChessBoard board) {
         StringBuilder printBoard = new StringBuilder();
-        board.resetBoard();
+        // board.resetBoard();
         ChessPiece[][] squares = board.getSquares();
 
         printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ a  b  c  d  e  f  g  h _\n");
@@ -348,7 +405,7 @@ public class Client {
 
     private void drawBoardBlack(ChessBoard board) {
         StringBuilder printBoard = new StringBuilder();
-        board.resetBoard(); // Remove in Phase 6
+        // board.resetBoard(); // Remove in Phase 6
         ChessPiece[][] squares = board.getSquares();
 
         printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ h  g  f  e  d  c  b  a _\n");
@@ -377,6 +434,60 @@ public class Client {
             drawBoardWhite(game.getBoard());
         }
         System.out.print(SET_TEXT_COLOR_WHITE + ">>> ");
+    }
+
+    private void drawHighlightWhite(Collection<ChessMove> moves, ChessGame game, ChessPosition startPos)
+    {
+        StringBuilder printBoard = new StringBuilder();
+        ChessBoard board = game.getBoard();
+        ChessPiece[][] squares = board.getSquares();
+
+        printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ a  b  c  d  e  f  g  h _\n");
+        for (int i = 0; i < BOARD_SIZE; i++){
+            printBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+            printBoard.append(8 - i);
+            printBoard.append(SET_TEXT_COLOR_WHITE);
+            for (int j = 0; j < BOARD_SIZE; j++){
+                ChessPosition endPos = new ChessPosition(8 - i, j + 1);
+                ChessMove move = new ChessMove(startPos, endPos, null);
+                if (moves.contains(move)) { printBoard.append(SET_BG_COLOR_YELLOW); }
+                else { setBGColor(printBoard, i, j); }
+
+                printBoard.append(getCharacter(squares[i][j]));
+
+            }
+            printBoard.append(RESET_BG_COLOR + SET_TEXT_COLOR_LIGHT_GREY + (8 - i) + "\n");
+        }
+
+        printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ a  b  c  d  e  f  g  h _\n");
+        System.out.println(printBoard);
+
+    }
+
+    private void drawHighlightBlack(Collection<ChessMove> moves, ChessGame game, ChessPosition startPos) {
+        StringBuilder printBoard = new StringBuilder();
+        ChessBoard board = game.getBoard();
+        ChessPiece[][] squares = board.getSquares();
+
+        printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ h  g  f  e  d  c  b  a _\n");
+        for (int i = 0; i < BOARD_SIZE; i++){
+            printBoard.append(SET_TEXT_COLOR_LIGHT_GREY);
+            printBoard.append(i + 1);
+            printBoard.append(SET_TEXT_COLOR_WHITE);
+            for (int j = 0; j < BOARD_SIZE; j++){
+                ChessPosition endPos = new ChessPosition(i + 1, 8 - j);
+                ChessMove move = new ChessMove(startPos, endPos, null);
+                if (moves.contains(move)) { printBoard.append(SET_BG_COLOR_YELLOW); }
+                else { setBGColor(printBoard, i, j); }
+
+                printBoard.append(getCharacter(squares[i][j]));
+            }
+            printBoard.append(RESET_BG_COLOR + SET_TEXT_COLOR_LIGHT_GREY + (i + 1) + "\n");
+        }
+
+        printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ h  g  f  e  d  c  b  a _\n");
+        System.out.println(printBoard);
+
     }
 
     private void setBGColor(StringBuilder printBoard, int i, int j) {

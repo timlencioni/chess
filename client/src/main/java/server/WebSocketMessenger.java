@@ -75,7 +75,7 @@ public class WebSocketMessenger extends Endpoint {
     }
 
     private void handleError(ServerMessage message) {
-        String msg = ((NotificationMessage) message).getMessage();
+        String msg = ((ErrorMessage) message).getErrorMessage();
         System.out.print(ERASE_LINE + '\r');
         System.out.printf("\n%s\n%s%s", msg, SET_TEXT_COLOR_RED, ">>> ");
     }
