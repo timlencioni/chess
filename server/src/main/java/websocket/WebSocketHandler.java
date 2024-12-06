@@ -95,7 +95,9 @@ public class WebSocketHandler {
 
     private void leave(Session session, AuthData auth, GameData game) throws IOException {
         if (auth.username().equals(game.whiteUsername())) { gameDAO.removePlayer(game.gameID(), "WHITE"); }
-        else { gameDAO.removePlayer(game.gameID(), "BLACK"); }
+        else if (auth.username().equals(game.blackUsername())) {
+            gameDAO.removePlayer(game.gameID(), "BLACK");
+        }
 
         connections.removeSession(game.gameID(), session);
         String notification = String.format("%s left the game", auth.username());

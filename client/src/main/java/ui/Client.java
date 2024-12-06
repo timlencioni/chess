@@ -268,11 +268,11 @@ public class Client {
         if (params.length != 0) {
             return SETUP_ERROR + "No arguments needed!";
         }
-
+        // FIXME Redraw as observer
         // get ChessGame
         ChessGame game = server.getCurrGame();
 
-        if (playerColor.equalsIgnoreCase("black")) { drawBoardBlack(game.getBoard()); }
+        if (playerColor != null && playerColor.equalsIgnoreCase("black")) { drawBoardBlack(game.getBoard()); }
         else { drawBoardWhite(game.getBoard()); }
         return "";
     }
@@ -339,7 +339,7 @@ public class Client {
             }
         }
 
-        inGame = false; // Do we want this?
+        // inGame = false; // Do we want this?
         return SETUP_SUCCESS + "You Resigned.";
     }
 
