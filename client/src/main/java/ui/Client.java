@@ -269,6 +269,7 @@ public class Client {
             server.observe(authToken, id);
 
             inGame = true;
+            currGameID = id;
 
             return SETUP_SUCCESS + "Have fun!";
         }
@@ -294,7 +295,7 @@ public class Client {
         }
 
         server.leaveGame(authToken, currGameID);
-        currGameID = -1;
+
         inGame = false;
         return SETUP_SUCCESS + "Goodbye";
     }
@@ -433,7 +434,7 @@ public class Client {
         else {
             drawBoardWhite(game.getBoard());
         }
-        System.out.print(SET_TEXT_COLOR_WHITE + ">>> ");
+        System.out.print(RESET_TEXT_COLOR + ">>> ");
     }
 
     private void drawHighlightWhite(Collection<ChessMove> moves, ChessGame game, ChessPosition startPos)
@@ -450,7 +451,7 @@ public class Client {
             for (int j = 0; j < BOARD_SIZE; j++){
                 ChessPosition endPos = new ChessPosition(8 - i, j + 1);
                 ChessMove move = new ChessMove(startPos, endPos, null);
-                if (moves.contains(move)) { printBoard.append(SET_BG_COLOR_YELLOW); }
+                if (moves.contains(move) || endPos.equals(startPos)) { printBoard.append(SET_BG_COLOR_YELLOW); }
                 else { setBGColor(printBoard, i, j); }
 
                 printBoard.append(getCharacter(squares[i][j]));
@@ -477,7 +478,7 @@ public class Client {
             for (int j = 0; j < BOARD_SIZE; j++){
                 ChessPosition endPos = new ChessPosition(i + 1, 8 - j);
                 ChessMove move = new ChessMove(startPos, endPos, null);
-                if (moves.contains(move)) { printBoard.append(SET_BG_COLOR_YELLOW); }
+                if (moves.contains(move) || endPos.equals(startPos)) { printBoard.append(SET_BG_COLOR_YELLOW); }
                 else { setBGColor(printBoard, i, j); }
 
                 printBoard.append(getCharacter(squares[i][j]));
