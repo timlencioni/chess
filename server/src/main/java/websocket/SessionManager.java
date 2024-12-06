@@ -36,14 +36,14 @@ public class SessionManager {
         var removeMap = new HashMap<Integer, Session>();
 
         HashSet<Session> sessionSet = sessions.get(gameID);
-        for (Session session : sessionSet)
+        for (Session session : sessionSet) {
             if (session.isOpen() && !session.equals(excludedSession)) {
                 session.getRemote().sendString(message);
 
             } else if (!session.isOpen()) {
                 removeMap.put(gameID, session);
             }
-
+        }
 
         removeSession(gameID, removeMap.get(gameID));
     }

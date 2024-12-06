@@ -272,7 +272,7 @@ public class SqlGameDAO implements GameDAO{
                 statement.setString(4, new Gson().toJson(game.game()));
                 statement.setInt(5, game.gameID());
                 int rowsUpdated = statement.executeUpdate();
-                if (rowsUpdated == 0) throw new DataAccessException("Item requested to be updated not found");
+                if (rowsUpdated == 0) { throw new DataAccessException("Item requested to be updated not found"); }
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
