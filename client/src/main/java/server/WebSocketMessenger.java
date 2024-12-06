@@ -65,7 +65,7 @@ public class WebSocketMessenger extends Endpoint {
 
     private void handleLoad(ServerMessage serverMessage) {
         ChessGame game = ((LoadMessage) serverMessage).getGame();
-        server.setCurrGame(game); // Is this working the way I think it is???
+        server.setCurrGame(game); // FIXME: Is this working the way I think it is???
     }
 
     private void handleNotification(ServerMessage message) {
@@ -74,7 +74,10 @@ public class WebSocketMessenger extends Endpoint {
         System.out.printf("\n%s\n%s%s", msg, SET_TEXT_COLOR_WHITE, ">>> ");
     }
 
-    private void handleError(ServerMessage serverMessage) {
+    private void handleError(ServerMessage message) {
+        String msg = ((NotificationMessage) message).getMessage();
+        System.out.print(ERASE_LINE + '\r');
+        System.out.printf("\n%s\n%s%s", msg, SET_TEXT_COLOR_RED, ">>> ");
     }
 
     @Override

@@ -29,6 +29,7 @@ public class Client {
 
     public Client(int port){
         server = new ServerFacade(port);
+        server.setClient(this);
         loggedIn = false;
         inGame = false;
         //authTokens = new ArrayList<>();
@@ -249,9 +250,6 @@ public class Client {
 
             // server.getCurrBoard(id);
 
-            if (color.equalsIgnoreCase("white")){ drawBoardWhite(server.getCurrGame().getBoard()); }
-            else { drawBoardBlack(server.getCurrGame().getBoard()); }
-
             inGame = true;
             currGameID = id;
             playerColor = color;
@@ -265,10 +263,9 @@ public class Client {
             return SETUP_ERROR + "Must provide <ID> of game to watch!";
         }
         else {
-            int id = Integer.parseInt(params[0]);
+            int id = Integer.parseInt(params[0]) - 100;
             // need to use id to get the correct game to observe
-
-            drawBoardWhite(server.getCurrGame().getBoard());
+            server.observe(authToken, id);
 
             inGame = true;
 
@@ -369,6 +366,17 @@ public class Client {
 
         printBoard.append(SET_TEXT_COLOR_LIGHT_GREY + "_ h  g  f  e  d  c  b  a _\n");
         System.out.println(printBoard);
+    }
+
+    public void drawBoard(ChessGame game) {
+        System.out.println(ERASE_LINE);
+        if (playerColor!= null && playerColor.equalsIgnoreCase("black")) {
+            drawBoardBlack(game.getBoard());
+        }
+        else {
+            drawBoardWhite(game.getBoard());
+        }
+        System.out.print(SET_TEXT_COLOR_WHITE + ">>> ");
     }
 
     private void setBGColor(StringBuilder printBoard, int i, int j) {

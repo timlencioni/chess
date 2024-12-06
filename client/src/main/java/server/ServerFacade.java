@@ -6,6 +6,7 @@ import model.*;
 
 import com.google.gson.Gson;
 import exception.ResponseException;
+import ui.Client;
 import websocket.commands.UserGameCommand;
 
 import java.io.*;
@@ -18,6 +19,7 @@ public class ServerFacade {
     private final int port;
     private WebSocketMessenger ws;
     private ChessGame currGame;
+    private Client client;
 
     public ServerFacade(int port) {
 
@@ -159,11 +161,20 @@ public class ServerFacade {
         ws.session.getAsyncRemote().sendText(message);
     }
 
-    public void setCurrGame(ChessGame game) { currGame = game; }
+    public void setClient(Client client) { this.client = client; }
+
+    public void setCurrGame(ChessGame game) {
+        currGame = game;
+        client.drawBoard(game);
+    }
 
     public ChessGame getCurrGame() {
 
-
         return currGame;
+    }
+
+    public void observe(String authToken, int gameID) {
+        String message = new Gson().toJson(new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID));
+        ws.session.getAsyncRemote().sendText(message);
     }
 }
